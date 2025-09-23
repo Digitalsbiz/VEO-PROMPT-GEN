@@ -1,18 +1,22 @@
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Header } from './components/Header';
 import { InputPanel } from './components/InputPanel';
 import { OutputPanel } from './components/OutputPanel';
 import { InspirationShowcase } from './components/InspirationShowcase';
+import { AdminPanel } from './components/AdminPanel';
 import { generateVeoPrompt } from './services/geminiService';
-import { TEMPLATES, PREDEFINED_EXAMPLES, SHOWCASE_VIDEOS, Example } from './constants';
+import { TEMPLATES, PREDEFINED_EXAMPLES, SHOWCASE_VIDEOS, ADMIN_EMAIL } from './constants';
 import { useHistoryState } from './hooks/useHistoryState';
+import { LoginPage } from './components/Auth';
 
 // Define the shape of our history state
 interface AppFormState {
     selectedTemplateId: string;
-    inputValues: { [key: string]: string };
+    inputValues: { [key:string]: string };
 }
+
+type AppView = 'login' | 'app' | 'admin';
 
 const defaultCss = `/* Example: Style JSON elements */
 .json-formatter-container .string {
@@ -51,20 +55,73 @@ const App: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [customCss, setCustomCss] = useState<string>(defaultCss);
+    
+    // Auth and View State
+    const [userEmail, setUserEmail] = useState<string | null>(null);
+    const [allUsers, setAllUsers] = useState<string[]>([]);
+    const [view, setView] = useState<AppView>('app');
 
+    // Load initial state from localStorage
+    useEffect(() => {
+        const storedEmail = localStorage.getItem('veoUserEmail');
+        if (storedEmail) {
+            setUserEmail(storedEmail);
+            setView('app');
+        } else {
+            setView('login');
+        }
 
-    // Derive selectedTemplate from the state's ID for memoization
+        const storedUsers = localStorage.getItem('veoAllUsers');
+        if (storedUsers) {
+            setAllUsers(JSON.parse(storedUsers));
+        } else {
+             // Seed with admin if no users exist
+            localStorage.setItem('veoAllUsers', JSON.stringify([ADMIN_EMAIL]));
+            setAllUsers([ADMIN_EMAIL]);
+        }
+    }, []);
+
+    const handleLogin = (email: string, password: string) => {
+        // Simulate successful login & user registration
+        localStorage.setItem('veoUserEmail', email);
+        setUserEmail(email);
+
+        // Add user to the "database" if they don't exist
+        const updatedUsers = [...new Set([...allUsers, email])];
+        setAllUsers(updatedUsers);
+        localStorage.setItem('veoAllUsers', JSON.stringify(updatedUsers));
+        
+        setView('app');
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('veoUserEmail');
+        setUserEmail(null);
+        setView('login');
+    };
+    
+    const handleDeleteUser = (emailToDelete: string) => {
+        if (emailToDelete === ADMIN_EMAIL) {
+            alert("Cannot delete the primary admin account.");
+            return;
+        }
+        if (window.confirm(`Are you sure you want to delete the user: ${emailToDelete}?`)) {
+            const updatedUsers = allUsers.filter(email => email !== emailToDelete);
+            setAllUsers(updatedUsers);
+            localStorage.setItem('veoAllUsers', JSON.stringify(updatedUsers));
+        }
+    };
+
     const selectedTemplate = useMemo(() => {
         return TEMPLATES.find(t => t.id === formState.selectedTemplateId) || TEMPLATES[0];
     }, [formState.selectedTemplateId]);
 
     const handleGenerate = useCallback(async () => {
         setIsLoading(true);
-        setError(null);
+setError(null);
         setGeneratedJson('');
         try {
             const jsonOutput = await generateVeoPrompt(selectedTemplate.template, formState.inputValues);
-            // A simple check and cleanup for markdown fences
             const cleanedJson = jsonOutput.replace(/^```json\s*|```$/g, '').trim();
             setGeneratedJson(JSON.stringify(JSON.parse(cleanedJson), null, 2));
         } catch (e) {
@@ -78,11 +135,11 @@ const App: React.FC = () => {
     const handleTemplateChange = (templateId: string) => {
         setFormState({
             selectedTemplateId: templateId,
-            inputValues: {} // Reset inputs when template changes
+            inputValues: {}
         });
     };
 
-    const handleInputChange = (newInputValues: { [key: string]: string }) => {
+    const handleInputChange = (newInputValues: { [key:string]: string }) => {
         setFormState({
             ...formState,
             inputValues: newInputValues,
@@ -100,14 +157,32 @@ const App: React.FC = () => {
                 selectedTemplateId: example.templateId,
                 inputValues: { ...example.values }
             });
-             // Scroll to the top of the form for better UX
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
     
+    // Conditional Rendering Logic
+    if (view === 'login' || !userEmail) {
+        return <LoginPage onLogin={handleLogin} />;
+    }
+    
+    if (view === 'admin') {
+        return <AdminPanel 
+                    users={allUsers} 
+                    onDeleteUser={handleDeleteUser} 
+                    onBackToApp={() => setView('app')}
+                    currentUserEmail={userEmail}
+                />;
+    }
+
     return (
         <div className="min-h-screen bg-slate-900 text-slate-200 font-sans flex flex-col">
-            <Header />
+            <Header 
+                userEmail={userEmail} 
+                onLogout={handleLogout}
+                isAdmin={userEmail === ADMIN_EMAIL}
+                onNavigateToAdmin={() => setView('admin')}
+            />
             <main className="flex-grow container mx-auto p-4 md:p-8 flex flex-col gap-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                     <InputPanel

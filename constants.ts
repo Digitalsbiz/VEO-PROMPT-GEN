@@ -20,6 +20,8 @@ export interface ShowcaseVideo {
     exampleId: string;
 }
 
+export const ADMIN_EMAIL = 'admin@example.com';
+
 
 export const TEMPLATES: Template[] = [
     {

@@ -32,6 +32,15 @@ export const VideoCard: React.FC<VideoCardProps> = ({ videoUrl, title, descripti
             setIsMuted(videoRef.current.muted);
         }
     };
+    
+    // Keyboard accessibility for play/pause
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            togglePlayPause();
+        }
+    };
+
 
     // Ensure state is in sync with video element properties
     useEffect(() => {
@@ -60,7 +69,14 @@ export const VideoCard: React.FC<VideoCardProps> = ({ videoUrl, title, descripti
 
     return (
         <div className="bg-slate-800 rounded-lg overflow-hidden border border-slate-700 flex flex-col group transition-all duration-300 hover:shadow-2xl hover:border-indigo-500/50">
-            <div className="relative aspect-video bg-black cursor-pointer" onClick={togglePlayPause}>
+            <div
+                className="relative aspect-video bg-black cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-800 rounded-t-lg"
+                onClick={togglePlayPause}
+                onKeyDown={handleKeyDown}
+                role="button"
+                tabIndex={0}
+                aria-label={isPlaying ? `Pause video: ${title}` : `Play video: ${title}`}
+            >
                 <video
                     ref={videoRef}
                     src={videoUrl}
@@ -69,8 +85,9 @@ export const VideoCard: React.FC<VideoCardProps> = ({ videoUrl, title, descripti
                     muted
                     loop
                     playsInline
+                    tabIndex={-1} // The container is focusable, not the video element itself
                 />
-                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
                     <div className="flex items-center gap-4 p-2 bg-black/50 rounded-full">
                          {isPlaying ? (
                             <PauseIcon className="w-8 h-8 text-white drop-shadow-lg" />
@@ -80,7 +97,11 @@ export const VideoCard: React.FC<VideoCardProps> = ({ videoUrl, title, descripti
                     </div>
                 </div>
                  <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <button onClick={toggleMute} className="p-2 bg-black/50 rounded-full" aria-label={isMuted ? 'Unmute' : 'Mute'}>
+                    <button 
+                        onClick={toggleMute} 
+                        className="p-2 bg-black/50 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+                        aria-label={isMuted ? 'Unmute' : 'Mute'}
+                    >
                         {isMuted ? (
                             <VolumeXIcon className="w-5 h-5 text-white" />
                         ) : (
