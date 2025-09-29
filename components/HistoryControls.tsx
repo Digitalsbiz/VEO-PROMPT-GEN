@@ -1,6 +1,6 @@
-
 import React from 'react';
 import { UndoIcon, RedoIcon } from './icons';
+import { Tooltip } from './Tooltip';
 
 interface HistoryControlsProps {
     onUndo: () => void;
@@ -14,12 +14,16 @@ export const HistoryControls: React.FC<HistoryControlsProps> = ({ onUndo, onRedo
     
     return (
         <div className="flex items-center gap-2">
-            <button onClick={onUndo} disabled={!canUndo} className={buttonClass} aria-label="Undo">
-                <UndoIcon className="w-5 h-5" />
-            </button>
-            <button onClick={onRedo} disabled={!canRedo} className={buttonClass} aria-label="Redo">
-                <RedoIcon className="w-5 h-5" />
-            </button>
+            <Tooltip text="Undo (Ctrl+Z)">
+                <button onClick={onUndo} disabled={!canUndo} className={buttonClass} aria-label="Undo">
+                    <UndoIcon className="w-5 h-5" />
+                </button>
+            </Tooltip>
+            <Tooltip text="Redo (Ctrl+Y)">
+                <button onClick={onRedo} disabled={!canRedo} className={buttonClass} aria-label="Redo">
+                    <RedoIcon className="w-5 h-5" />
+                </button>
+            </Tooltip>
         </div>
     );
 };

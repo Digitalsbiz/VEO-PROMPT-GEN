@@ -3,13 +3,15 @@ import React from 'react';
 import { ShowcaseVideo } from '../constants';
 import { VideoCard } from './VideoCard';
 import { LightbulbIcon } from './icons';
+import { UserRole } from '../App';
 
 interface InspirationShowcaseProps {
     videos: ShowcaseVideo[];
     onLoadExample: (exampleId: string) => void;
+    userRole: UserRole;
 }
 
-export const InspirationShowcase: React.FC<InspirationShowcaseProps> = ({ videos, onLoadExample }) => {
+export const InspirationShowcase: React.FC<InspirationShowcaseProps> = ({ videos, onLoadExample, userRole }) => {
     return (
         <section className="bg-slate-800/50 p-6 rounded-lg border border-slate-700 shadow-lg">
             <div className="flex items-center gap-3 mb-6">
@@ -28,6 +30,8 @@ export const InspirationShowcase: React.FC<InspirationShowcaseProps> = ({ videos
                         title={video.title}
                         description={video.description}
                         onLoadExample={() => onLoadExample(video.exampleId)}
+                        isPremium={video.isPremium}
+                        userRole={userRole}
                     />
                 ))}
             </div>

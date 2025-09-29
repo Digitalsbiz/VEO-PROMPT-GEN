@@ -3,6 +3,7 @@ export interface Template {
     id: string;
     name: string;
     template: string;
+    premium?: boolean;
 }
 
 export interface Example {
@@ -18,9 +19,26 @@ export interface ShowcaseVideo {
     title: string;
     description: string;
     exampleId: string;
+    isPremium?: boolean;
 }
 
-export const ADMIN_EMAIL = 'admin@example.com';
+export interface VisualStyle {
+    id: string;
+    name: string;
+}
+
+export const ADMIN_EMAIL = 'digitalsbiz@gmail.com';
+export const ADMIN_PASSWORD = 'Admin123';
+export const FREE_USER_GENERATION_LIMIT = 5;
+
+export const VISUAL_STYLES: VisualStyle[] = [
+    { id: 'cyberpunk', name: 'Cyberpunk' },
+    { id: 'art-deco', name: 'Art Deco' },
+    { id: 'film-noir', name: 'Film Noir' },
+    { id: 'impressionism', name: 'Impressionism' },
+    { id: 'minimalist', name: 'Minimalist' },
+    { id: 'steampunk', name: 'Steampunk' },
+];
 
 
 export const TEMPLATES: Template[] = [
@@ -61,6 +79,7 @@ export const TEMPLATES: Template[] = [
     {
         id: 'fantasy-epic',
         name: '2. Fantasy Epic Relic Reveal',
+        premium: true,
         template: `{
   "description": "A sweeping aerial shot glides over misty mountains and vast emerald valleys. Ancient stone ruins rise from the earth, bathed in golden sunrise. At the center of a grand courtyard, a colossal stone altar rests — its carvings pulsing faintly. As a deep choir hums, the stone cracks apart to reveal {{PRODUCT_NAME}}, floating in a sphere of golden light. Runes swirl around it, casting beams into the sky. Far away, kingdoms awaken — banners unfurl, waterfalls surge, dragons soar past towering citadels. Magic storms spiral over oceans as the world reacts to the relic’s return. Knights, wizards, and entire armies gather at the altar in awe. The camera sweeps in as the product descends gently onto a pedestal made of crystal, its glow illuminating the faces of those gathered. The world has changed forever.",
   "style": "cinematic, high-fantasy, ultra-realistic magical realism",
@@ -96,6 +115,7 @@ export const TEMPLATES: Template[] = [
     {
         id: 'action-thriller',
         name: '3. Modern-Day Action Thriller',
+        premium: true,
         template: `{
   "description": "Nighttime in a neon-lit city — rain slick streets reflect holographic ads. A black briefcase handcuffed to an agent’s wrist cuts through a crowded market. Surveillance drones track him. Suddenly, a high-speed chase erupts — parkour over rooftops, weaving through traffic, sprinting down subway tunnels. The briefcase hums louder and louder until the agent bursts into a rooftop helipad surrounded by skyscrapers. A stealth chopper hovers overhead, spotlight blinding. He slams the briefcase onto a table — biometric locks scan and release with a hiss. Inside, bathed in cold blue light, is {{PRODUCT_NAME}}. The city’s power grid surges, all holographic billboards flipping to its image. The agent disappears into the night as the product hovers in the air, rain cascading off its edges.",
   "style": "high-contrast, gritty neon realism, cinematic spy thriller",
@@ -256,6 +276,106 @@ export const TEMPLATES: Template[] = [
     "epic",
     "natural world",
     "slow motion"
+  ]
+}`
+    },
+    {
+        id: 'sci-fi-trailer',
+        name: '8. Sci-Fi Blockbuster Trailer',
+        premium: true,
+        template: `{
+  "description": "A high-octane sci-fi trailer. Opens with a silent, vast shot of a nebula. A distress signal flickers. Cut to the gleaming metropolis of {{CITY_NAME}} on {{PLANET_NAME}}, a utopia under threat. We see the protagonist, {{PROTAGONIST_DESCRIPTION}}, discovering a cryptic alien artifact. The artifact activates, unleashing chaos. The menacing fleet of the {{ANTAGONIST_RACE}} darkens the sky. Quick cuts of epic space battles, advanced {{TECHNOLOGY_TYPE}} being deployed, and desperate ground fights. The fate of the galaxy hangs in the balance.",
+  "style": "cinematic, epic sci-fi, high-contrast, blockbuster trailer feel",
+  "camera": "sweeping establishing shots of space and cities, frantic handheld shots during action, dramatic slow-motion on key reveals, rapid-fire editing",
+  "lighting": "lens flares, neon city lights, harsh explosions, cold metallic blues for alien ships, warm hopeful light for protagonist moments",
+  "environment": "dazzling futuristic city, desolate alien landscapes, claustrophobic starship interiors, vastness of space",
+  "elements": [
+    "gleaming metropolis of {{CITY_NAME}}",
+    "protagonist: {{PROTAGONIST_DESCRIPTION}}",
+    "cryptic alien artifact",
+    "menacing {{ANTAGONIST_RACE}} mothership and fighter fleet",
+    "advanced {{TECHNOLOGY_TYPE}} (e.g., energy shields, plasma cannons)",
+    "large-scale space and ground battles"
+  ],
+  "motion": "fast-paced cuts, explosive action, dramatic push-ins on character faces, smooth fly-throughs of massive structures",
+  "ending": "A final, epic standoff. The protagonist faces the alien leader. Title card smash. Black screen.",
+  "text": "{{MOVIE_TITLE}} - Coming Soon",
+  "keywords": [
+    "sci-fi",
+    "space opera",
+    "alien invasion",
+    "futuristic city",
+    "epic trailer",
+    "blockbuster",
+    "{{PLANET_NAME}}",
+    "cinematic"
+  ]
+}`
+    },
+    {
+        id: 'historical-drama',
+        name: '9. Historical Drama Epic',
+        premium: true,
+        template: `{
+  "description": "A cinematic journey into the heart of the {{HISTORICAL_ERA}}. We open on the sprawling capital of the {{EMPIRE_NAME}}, filled with period-accurate architecture and crowds. We follow {{MAIN_CHARACTER_DESCRIPTION}}, a figure destined for greatness or tragedy. The scene captures the political intrigue, societal tensions, and grand scale of the era, focusing on a pivotal {{HISTORICAL_EVENT}}. Lavish costumes, grand halls, and gritty battlefields paint a vivid picture of a bygone world.",
+  "style": "cinematic, historical realism, painterly visuals, grand scale",
+  "camera": "majestic crane shots over cities and armies, intimate, candlelit close-ups during dialogue scenes, visceral, shaky-cam for battles",
+  "lighting": "naturalistic, using sunlight, firelight, and candlelight to create a rich, textured atmosphere; deep shadows for dramatic intrigue",
+  "environment": "grand palaces, bustling medieval markets, muddy battlefields, opulent throne rooms",
+  "elements": [
+    "the capital of the {{EMPIRE_NAME}}",
+    "{{MAIN_CHARACTER_DESCRIPTION}}",
+    "pivotal historical event: {{HISTORICAL_EVENT}}",
+    "period-accurate costumes and props",
+    "armies clashing in formation",
+    "scenes of royal court and political maneuvering"
+  ],
+  "motion": "a blend of slow, deliberate pacing for dramatic scenes and chaotic, intense motion for action sequences; sweeping pans across landscapes",
+  "ending": "{{MAIN_CHARACTER_DESCRIPTION}} makes a fateful decision, the consequences of which will echo through history. The camera lingers on their face before fading to black.",
+  "text": "none",
+  "keywords": [
+    "historical drama",
+    "epic",
+    "{{HISTORICAL_ERA}}",
+    "{{EMPIRE_NAME}}",
+    "period piece",
+    "cinematic",
+    "battle",
+    "intrigue"
+  ]
+}`
+    },
+    {
+        id: 'fashion-lookbook',
+        name: '10. High-Fashion Lookbook',
+        premium: true,
+        template: `{
+  "description": "An avant-garde, cinematic fashion film for the '{{COLLECTION_NAME}}' collection. A model, {{MODEL_DESCRIPTION}}, moves through a surreal, {{LOCATION_AESTHETIC}} landscape. The film is a series of striking, artistic vignettes, each showcasing a key look. The focus is on texture, movement, and mood. We see extreme close-ups of {{FABRIC_DETAILS}} and the intricate design of {{CLOTHING_PIECES}}. The atmosphere is dreamlike and evocative, more art film than commercial.",
+  "style": "surreal, avant-garde, highly stylized, editorial fashion",
+  "camera": "unconventional framing, slow-motion, artistic focus pulls, static portrait-like shots contrasted with fluid, dancing movements",
+  "lighting": "dramatic, high-contrast lighting; using colored gels, hard shadows, and soft, ethereal glows to create a mood",
+  "environment": "surreal and artistic location, such as {{LOCATION_AESTHETIC}} (e.g., a brutalist concrete structure, a salt flat at sunset, an overgrown gothic greenhouse)",
+  "elements": [
+    "model: {{MODEL_DESCRIPTION}}",
+    "key looks from the '{{COLLECTION_NAME}}' collection",
+    "close-ups on fabric textures: {{FABRIC_DETAILS}}",
+    "showcase of specific {{CLOTHING_PIECES}}",
+    "artistic props that complement the theme",
+    "abstract visual motifs (e.g., water, smoke, mirrors)"
+  ],
+  "motion": "hypnotic, deliberate movements; fabric flowing in the wind; slow-motion captures of subtle gestures and expressions",
+  "ending": "A final, powerful portrait shot of the model in the hero outfit. The brand logo appears subtly on screen.",
+  "text": "{{BRAND_NAME}} - {{COLLECTION_NAME}}",
+  "keywords": [
+    "fashion film",
+    "lookbook",
+    "avant-garde",
+    "haute couture",
+    "editorial",
+    "surreal",
+    "cinematic",
+    "{{BRAND_NAME}}",
+    "{{COLLECTION_NAME}}"
   ]
 }`
     }

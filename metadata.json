@@ -1,5 +1,5 @@
 {
-  "name": "Veo Prompt Architect",
+  "name": "PromptCraft",
   "description": "An assistant to help creators turn natural language video ideas into structured JSON prompts for Google Veo. Select a template, fill in the details, and let AI generate a cinematic, visually rich JSON prompt.",
   "requestFramePermissions": []
 }
