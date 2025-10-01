@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Header } from './components/Header';
 import { InputPanel } from './components/InputPanel';
@@ -389,7 +388,7 @@ const App: React.FC = () => {
 
 
     return (
-        <div className="min-h-screen bg-slate-900 text-slate-200 font-sans flex flex-col">
+        <div className="min-h-screen text-slate-200 flex flex-col font-futuristic">
             <Header 
                 userEmail={userEmail} 
                 onLogout={handleLogout}
@@ -438,7 +437,7 @@ const App: React.FC = () => {
                 </div>
                  <InspirationShowcase videos={showcaseVideosWithPremium} onLoadExample={handleExampleChange} userRole={currentUser.role} />
             </main>
-             <footer className="text-center p-4 text-slate-500 text-sm">
+             <footer className="text-center p-4 text-cyan-400/50 text-sm font-sans">
                 <p>Powered by Google Gemini. Designed for creative video professionals.</p>
             </footer>
         </div>

@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { PlayIcon, PauseIcon, Volume2Icon, VolumeXIcon, LockIcon } from './icons';
 import { UserRole } from '../types';
@@ -75,9 +74,9 @@ export const VideoCard: React.FC<VideoCardProps> = ({ videoUrl, title, descripti
 
 
     return (
-        <div className="bg-slate-800 rounded-lg overflow-hidden border border-slate-700 flex flex-col group transition-all duration-300 hover:shadow-2xl hover:border-indigo-500/50">
+        <div className="bg-slate-900/80 rounded-lg overflow-hidden border border-slate-700/80 flex flex-col group transition-all duration-300 hover:shadow-2xl hover:border-cyan-400/50 hover:scale-105">
             <div
-                className="relative aspect-video bg-black cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-800 rounded-t-lg"
+                className="relative aspect-video bg-black cursor-pointer focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-slate-800 rounded-t-lg"
                 onClick={togglePlayPause}
                 onKeyDown={handleKeyDown}
                 role="button"
@@ -106,7 +105,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({ videoUrl, title, descripti
                  <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <button 
                         onClick={toggleMute} 
-                        className="p-2 bg-black/50 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+                        className="p-2 bg-black/50 rounded-full focus:outline-none focus:ring-2 focus:ring-cyan-500" 
                         aria-label={isMuted ? 'Unmute' : 'Mute'}
                     >
                         {isMuted ? (
@@ -117,32 +116,30 @@ export const VideoCard: React.FC<VideoCardProps> = ({ videoUrl, title, descripti
                     </button>
                 </div>
                 {isLocked && (
-                    <div className="absolute top-2 left-2 bg-amber-500 text-slate-900 text-xs font-bold px-2 py-1 rounded-full">
+                    <div className="absolute top-2 left-2 bg-amber-500 text-slate-900 text-xs font-bold px-2 py-1 rounded-full font-sans">
                         PRO
                     </div>
                 )}
             </div>
-            <div className="p-4 flex flex-col flex-grow">
+            <div className="p-4 flex flex-col flex-grow font-sans">
                 <h3 className="font-bold text-slate-100 mb-2">{title}</h3>
                 <p className="text-slate-400 text-sm mb-4 flex-grow">{description}</p>
                  {isLocked ? (
-                    <Tooltip text="This example uses a PRO template. Upgrade to a Paid account to use it.">
-                        <button
-                            disabled
-                            className="w-full mt-auto bg-slate-700 text-slate-500 font-semibold py-2 px-4 rounded-md transition duration-200 ease-in-out text-sm flex items-center justify-center gap-2 cursor-not-allowed"
-                        >
-                            <LockIcon className="w-4 h-4" />
-                            Upgrade to Use
-                        </button>
+                    <Tooltip text="Upgrade to a Paid account to use this PRO example.">
+                        <div className="w-full flex items-center justify-center bg-slate-700 text-slate-500 font-semibold py-2 px-4 rounded-md cursor-not-allowed">
+                            <LockIcon className="w-4 h-4 mr-2" />
+                            <span>Use this Example</span>
+                        </div>
                     </Tooltip>
-                 ) : (
+                ) : (
                     <button
                         onClick={onLoadExample}
-                        className="w-full mt-auto bg-slate-700 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md transition duration-200 ease-in-out text-sm"
+                        className="w-full bg-cyan-600/80 hover:bg-cyan-500 text-white font-semibold py-2 px-4 rounded-md transition duration-200 ease-in-out mt-auto"
+                        aria-label={`Use example: ${title}`}
                     >
                         Use this Example
                     </button>
-                 )}
+                )}
             </div>
         </div>
     );

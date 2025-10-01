@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ShowcaseVideo } from '../constants';
 import { VideoCard } from './VideoCard';
@@ -13,12 +12,12 @@ interface InspirationShowcaseProps {
 
 export const InspirationShowcase: React.FC<InspirationShowcaseProps> = ({ videos, onLoadExample, userRole }) => {
     return (
-        <section className="bg-slate-800/50 p-6 rounded-lg border border-slate-700 shadow-lg">
+        <section className="bg-slate-900/60 backdrop-blur-md p-6 rounded-lg border border-cyan-400/30 shadow-2xl shadow-cyan-500/5">
             <div className="flex items-center gap-3 mb-6">
                 <LightbulbIcon className="w-8 h-8 text-amber-300" />
-                <h2 className="text-2xl font-bold text-slate-100">Inspiration Showcase</h2>
+                <h2 className="text-2xl font-bold text-slate-100 uppercase tracking-wider">Inspiration <span className="text-cyan-400">Showcase</span></h2>
             </div>
-            <p className="text-slate-400 mb-6 max-w-3xl">
+            <p className="text-slate-400 mb-6 max-w-3xl font-sans">
                 See what's possible with the Veo Prompt Architect. These short clips were generated from prompts created with our templates.
                 Click "Use this Example" on any video to load its configuration and start customizing.
             </p>

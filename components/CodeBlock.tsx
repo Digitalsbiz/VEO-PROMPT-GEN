@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { CopyIcon, CheckIcon } from './icons';
 
@@ -47,7 +46,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ code, customCss }) => {
             {customCss && <style>{customCss}</style>}
             <button
                 onClick={handleCopy}
-                className="absolute top-2 right-2 p-2 bg-slate-700 rounded-md text-slate-300 hover:bg-slate-600 hover:text-white transition-all duration-200 opacity-0 group-hover:opacity-100 focus:opacity-100"
+                className="absolute top-2 right-2 p-2 bg-slate-800/70 border border-slate-700 rounded-md text-slate-300 hover:bg-cyan-500/20 hover:text-white hover:border-cyan-500/50 transition-all duration-200 opacity-0 group-hover:opacity-100 focus:opacity-100"
                 aria-label="Copy code"
             >
                 {isCopied ? <CheckIcon className="w-5 h-5 text-green-400" /> : <CopyIcon className="w-5 h-5" />}

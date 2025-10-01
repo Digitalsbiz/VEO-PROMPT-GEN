@@ -1,4 +1,3 @@
-
 import React, { useMemo, useRef, useState } from 'react';
 import { Template, Example, FREE_USER_GENERATION_LIMIT, VisualStyle } from '../constants';
 import { MagicWandIcon, ImageIcon, XCircleIcon, SparklesIcon, AlertTriangleIcon, BanIcon, PaletteIcon } from './icons';
@@ -45,14 +44,14 @@ const LabeledInput: React.FC<{ label: string; value: string; onChange: (value: s
     const formattedLabel = label.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
     return (
-        <div>
-            <label className="block text-sm font-medium text-slate-400 mb-1">{formattedLabel}</label>
+        <div className="font-sans">
+            <label className="block text-sm font-medium text-cyan-300/80 mb-1 uppercase tracking-wider">{formattedLabel}</label>
             {isTextArea ? (
                  <textarea
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     placeholder={`e.g., dial, strap, display (one per line)`}
-                    className="w-full bg-slate-800 border border-slate-600 rounded-md shadow-sm p-2 text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-md shadow-sm p-2 text-slate-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition duration-150 ease-in-out"
                     rows={3}
                 />
             ) : (
@@ -61,7 +60,7 @@ const LabeledInput: React.FC<{ label: string; value: string; onChange: (value: s
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     placeholder={`Enter ${formattedLabel}`}
-                    className="w-full bg-slate-800 border border-slate-600 rounded-md shadow-sm p-2 text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-md shadow-sm p-2 text-slate-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition duration-150 ease-in-out"
                 />
             )}
         </div>
@@ -157,20 +156,20 @@ export const InputPanel: React.FC<InputPanelProps> = ({
     };
 
     return (
-        <div className="bg-slate-800/50 p-6 rounded-lg border border-slate-700 shadow-lg flex flex-col gap-6">
+        <div className="bg-slate-900/60 backdrop-blur-md p-6 rounded-lg border border-cyan-400/30 shadow-2xl shadow-cyan-500/5 flex flex-col gap-6">
             <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold text-slate-100">1. Configure Your Prompt</h2>
+                <h2 className="text-xl font-semibold text-slate-100 uppercase tracking-wider">1. Configure <span className="text-cyan-400">Prompt</span></h2>
                 <HistoryControls onUndo={onUndo} onRedo={onRedo} canUndo={canUndo} canRedo={canRedo} />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-sans">
                 <Tooltip text="Choose a foundational structure for your video prompt. Each template provides a different narrative style.">
                     <div>
-                        <label htmlFor="template-select" className="block text-sm font-medium text-slate-400 mb-1">Select a Template</label>
+                        <label htmlFor="template-select" className="block text-sm font-medium text-cyan-300/80 mb-1 uppercase tracking-wider">Select a Template</label>
                         <select
                             id="template-select"
                             value={selectedTemplate.id}
                             onChange={(e) => onTemplateChange(e.target.value)}
-                            className="w-full bg-slate-800 border border-slate-600 rounded-md shadow-sm p-2 text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+                            className="w-full bg-slate-900 border border-slate-700 rounded-md shadow-sm p-2 text-slate-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition duration-150 ease-in-out"
                         >
                             {templates.map(template => (
                                 <option key={template.id} value={template.id}>
@@ -182,12 +181,12 @@ export const InputPanel: React.FC<InputPanelProps> = ({
                 </Tooltip>
                  <Tooltip text="Populate the form with a pre-configured example to get started quickly.">
                     <div>
-                        <label htmlFor="example-select" className="block text-sm font-medium text-slate-400 mb-1">Load an Example</label>
+                        <label htmlFor="example-select" className="block text-sm font-medium text-cyan-300/80 mb-1 uppercase tracking-wider">Load an Example</label>
                         <select
                             id="example-select"
                             value=""
                             onChange={(e) => onExampleChange(e.target.value)}
-                            className="w-full bg-slate-800 border border-slate-600 rounded-md shadow-sm p-2 text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+                            className="w-full bg-slate-900 border border-slate-700 rounded-md shadow-sm p-2 text-slate-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition duration-150 ease-in-out"
                         >
                             <option value="" disabled>Choose an example...</option>
                             {examples.map(example => (
@@ -198,10 +197,10 @@ export const InputPanel: React.FC<InputPanelProps> = ({
                 </Tooltip>
             </div>
             
-            <div className="border-t border-slate-700 pt-4">
+            <div className="border-t border-cyan-400/20 pt-4 font-sans">
                 <Tooltip text="Select an optional artistic style to influence the overall mood and aesthetic of the generated prompt.">
                     <div>
-                        <label className="flex items-center gap-2 text-sm font-medium text-slate-400 mb-2">
+                        <label className="flex items-center gap-2 text-sm font-medium text-cyan-300/80 mb-2 uppercase tracking-wider">
                             <PaletteIcon className="w-4 h-4" />
                             <span>Visual Style (Optional)</span>
                         </label>
@@ -210,10 +209,10 @@ export const InputPanel: React.FC<InputPanelProps> = ({
                                 <button
                                     key={style.id}
                                     onClick={() => handleStyleButtonClick(style.id)}
-                                    className={`px-3 py-1.5 text-sm font-semibold rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 ${
+                                    className={`px-3 py-1.5 text-sm font-semibold rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 ${
                                         selectedStyleId === style.id
-                                            ? 'bg-indigo-600 text-white ring-indigo-500'
-                                            : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                                            ? 'bg-cyan-500 text-slate-900 ring-cyan-400'
+                                            : 'bg-slate-700/50 border border-slate-600 text-slate-300 hover:bg-slate-600/50 hover:border-slate-500'
                                     }`}
                                 >
                                     {style.name}
@@ -225,13 +224,13 @@ export const InputPanel: React.FC<InputPanelProps> = ({
             </div>
 
             {userRole === 'free' && (
-                <div className="text-xs text-slate-400 bg-slate-900/50 p-2 rounded-md text-center border border-slate-700">
+                <div className="text-xs text-cyan-200/70 bg-cyan-900/20 p-2 rounded-md text-center border border-cyan-400/20 font-sans">
                     ✨ Upgrade to a <span className="font-semibold text-amber-300">Paid</span> account to access all PRO templates!
                 </div>
             )}
 
             {placeholders.length > 0 && (
-                <div className="flex flex-col gap-4 border-t border-slate-700 pt-4">
+                <div className="flex flex-col gap-4 border-t border-cyan-400/20 pt-4">
                     {placeholders.map(placeholder => (
                         <LabeledInput
                             key={placeholder}
@@ -243,10 +242,10 @@ export const InputPanel: React.FC<InputPanelProps> = ({
                 </div>
             )}
 
-            <div className="border-t border-slate-700 pt-4">
+            <div className="border-t border-cyan-400/20 pt-4 font-sans">
                 <Tooltip text="Specify elements, styles, or concepts to exclude from the generated prompt (e.g., 'no text, cartoon style, bright colors').">
                     <div>
-                        <label htmlFor="negative-prompt" className="flex items-center gap-2 text-sm font-medium text-slate-400 mb-1">
+                        <label htmlFor="negative-prompt" className="flex items-center gap-2 text-sm font-medium text-cyan-300/80 mb-1 uppercase tracking-wider">
                             <BanIcon className="w-4 h-4" />
                             <span>Negative Prompt (Optional)</span>
                         </label>
@@ -255,7 +254,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({
                             value={negativePrompt}
                             onChange={(e) => onNegativePromptChange(e.target.value)}
                             placeholder="e.g., no text overlays, no cartoon style"
-                            className="w-full bg-slate-900 border border-slate-600 rounded-md shadow-sm p-2 text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+                            className="w-full bg-slate-900 border border-slate-700 rounded-md shadow-sm p-2 text-slate-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition duration-150 ease-in-out"
                             rows={2}
                             aria-label="Negative Prompt to exclude elements"
                         />
@@ -263,8 +262,8 @@ export const InputPanel: React.FC<InputPanelProps> = ({
                 </Tooltip>
             </div>
 
-            <details className="group border-t border-slate-700 pt-4" open>
-                <summary className="cursor-pointer text-sm font-medium text-slate-400 list-none flex justify-between items-center">
+            <details className="group border-t border-cyan-400/20 pt-4 font-sans" open>
+                <summary className="cursor-pointer text-sm font-medium text-cyan-300/80 list-none flex justify-between items-center uppercase tracking-wider">
                     <span>Reference Image</span>
                     <svg className="w-4 h-4 transition-transform duration-200 group-open:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
@@ -272,7 +271,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({
                 </summary>
                 
                 <div className="flex flex-col gap-4 mt-3">
-                    <details className="group/inner bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+                    <details className="group/inner bg-slate-950/50 p-4 rounded-lg border border-slate-700">
                          <summary className="cursor-pointer text-sm font-medium text-slate-300 list-none flex justify-between items-center">
                             <span>Generate Reference from Text</span>
                             <svg className="w-4 h-4 transition-transform duration-200 group-open/inner:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -284,7 +283,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({
                                 value={imagePrompt}
                                 onChange={(e) => setImagePrompt(e.target.value)}
                                 placeholder="e.g., A cinematic shot of a glossy black smartwatch with a glowing interface, on a marble surface."
-                                className="w-full bg-slate-800 border border-slate-600 rounded-md shadow-sm p-2 text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+                                className="w-full bg-slate-900 border border-slate-700 rounded-md shadow-sm p-2 text-slate-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition duration-150 ease-in-out"
                                 rows={3}
                                 aria-label="Prompt for generating a reference image"
                             />
@@ -324,19 +323,19 @@ export const InputPanel: React.FC<InputPanelProps> = ({
                                 />
                                 <button
                                     onClick={handleRemoveImage}
-                                    className="absolute -top-2 -right-2 bg-slate-700 hover:bg-red-600 text-white rounded-full p-1 transition-colors"
+                                    className="absolute -top-2 -right-2 bg-slate-800 border border-slate-700 hover:bg-red-600 text-white rounded-full p-1 transition-colors"
                                     aria-label="Remove reference image"
                                 >
                                     <XCircleIcon className="w-6 h-6" />
                                 </button>
                             </div>
                         ) : (
-                            <div className="w-full border-2 border-dashed border-slate-600 rounded-lg p-8 flex flex-col items-center justify-center text-center">
-                                <ImageIcon className="w-10 h-10 text-slate-500 mb-2" />
-                                <span className="text-slate-400 mb-2">Upload an image</span>
+                            <div className="w-full border-2 border-dashed border-cyan-400/30 rounded-lg p-8 flex flex-col items-center justify-center text-center bg-cyan-900/10">
+                                <ImageIcon className="w-10 h-10 text-cyan-400/50 mb-2" />
+                                <span className="text-cyan-200/70 mb-2">Upload an image</span>
                                 <button
                                     onClick={handleImageUploadClick}
-                                    className="bg-slate-700 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md transition duration-200 ease-in-out text-sm"
+                                    className="bg-slate-700/50 border border-cyan-400/30 hover:bg-cyan-500/20 text-white font-semibold py-2 px-4 rounded-md transition duration-200 ease-in-out text-sm"
                                 >
                                     Choose File
                                 </button>
@@ -353,16 +352,16 @@ export const InputPanel: React.FC<InputPanelProps> = ({
                 </div>
             </details>
 
-            <div className="border-t border-slate-700 pt-6">
+            <div className="border-t border-cyan-400/20 pt-6">
                  {isFreeUser && (
-                    <div className="text-center text-sm text-slate-400 mb-4 bg-slate-900/50 p-3 rounded-lg border border-slate-700">
+                    <div className="text-center text-sm text-cyan-200/70 mb-4 bg-slate-950/50 p-3 rounded-lg border border-cyan-400/20 font-sans">
                         You have <span className="font-bold text-amber-300">{remainingGenerations}</span> free generation{remainingGenerations !== 1 ? 's' : ''} remaining today.
                     </div>
                 )}
                 <button
                     onClick={onGenerate}
                     disabled={isLoading || limitReached}
-                    className="w-full flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded-md transition duration-200 ease-in-out disabled:bg-indigo-800 disabled:cursor-not-allowed transform hover:scale-105"
+                    className="w-full flex items-center justify-center bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold py-3 px-4 rounded-md transition duration-200 ease-in-out disabled:bg-cyan-800/50 disabled:text-slate-500 disabled:cursor-not-allowed transform hover:scale-105 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)]"
                 >
                     {isLoading ? (
                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -372,7 +371,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({
                     ) : (
                         <MagicWandIcon className="w-5 h-5 mr-2" />
                     )}
-                    <span>{isLoading ? 'Generating...' : 'Generate Prompt'}</span>
+                    <span className="uppercase tracking-wider">{isLoading ? 'Generating...' : 'Generate Prompt'}</span>
                 </button>
             </div>
         </div>

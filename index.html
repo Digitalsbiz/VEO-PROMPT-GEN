@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,9 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Veo Prompt Architect</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
       body {
-        background-color: #0f172a;
+        font-family: 'Orbitron', sans-serif;
+        background-color: #020617; /* slate-950 */
+        background-image: radial-gradient(circle at top left, rgba(30, 41, 59, 0.8), transparent 40%),
+                          radial-gradient(circle at bottom right, rgba(34, 211, 238, 0.2), transparent 50%);
+        position: relative;
+        overflow-x: hidden;
+      }
+      body::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: linear-gradient(rgba(207, 250, 254, 0.05) 1px, transparent 1px),
+                          linear-gradient(90deg, rgba(207, 250, 254, 0.05) 1px, transparent 1px);
+        background-size: 2.5rem 2.5rem;
+        opacity: 0.5;
+        pointer-events: none;
+        z-index: -1;
+      }
+      .font-sans {
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+      }
+      .font-futuristic {
+        font-family: 'Orbitron', sans-serif;
       }
     </style>
   <script type="importmap">
