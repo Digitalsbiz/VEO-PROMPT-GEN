@@ -1,6 +1,6 @@
 
 import { GoogleGenAI } from "@google/genai";
-import { ReferenceImage } from "../App";
+import { ReferenceImage } from "../types";
 
 const API_KEY = process.env.API_KEY;
 if (!API_KEY) {

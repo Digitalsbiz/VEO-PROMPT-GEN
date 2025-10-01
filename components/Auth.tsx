@@ -4,14 +4,16 @@ import { FilmIcon, AlertTriangleIcon, MailIcon } from './icons';
 import { ADMIN_EMAIL, ADMIN_PASSWORD } from '../constants';
 
 interface LoginPageProps {
-    onLogin: (email: string, password: string) => void;
+    onLogin: (email: string, password: string, rememberMe: boolean) => void;
     error: string | null;
     onClearError: () => void;
+    onNavigateToPrivacy: () => void;
 }
 
-export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, error, onClearError }) => {
+export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, error, onClearError, onNavigateToPrivacy }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [rememberMe, setRememberMe] = useState(true);
     const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
     const validate = (): boolean => {
@@ -44,7 +46,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, error, onClearErr
         e.preventDefault();
         onClearError();
         if (validate()) {
-            onLogin(email, password);
+            onLogin(email, password, rememberMe);
         }
     };
     
@@ -115,7 +117,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, error, onClearErr
                             </div>
                              {errors.email && <p id="email-error" className="text-red-400 text-sm mt-1">{errors.email}</p>}
                         </div>
-                        <div className="mb-6">
+                        <div className="mb-4">
                             <label htmlFor="password" className="block text-sm font-medium text-slate-400 mb-1">
                                 Password
                             </label>
@@ -141,6 +143,22 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, error, onClearErr
                             {errors.password && <p id="password-error" className="text-red-400 text-sm mt-1">{errors.password}</p>}
                         </div>
 
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center">
+                                <input
+                                    id="remember-me"
+                                    name="remember-me"
+                                    type="checkbox"
+                                    checked={rememberMe}
+                                    onChange={(e) => setRememberMe(e.target.checked)}
+                                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-500 rounded bg-slate-700"
+                                />
+                                <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-400">
+                                    Remember me
+                                </label>
+                            </div>
+                        </div>
+
                         <button
                             type="submit"
                             className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded-md transition duration-200 ease-in-out transform hover:scale-105"
@@ -160,6 +178,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, error, onClearErr
                 </div>
                  <footer className="text-center p-4 mt-4 text-slate-500 text-sm">
                     <p>Powered by Google Gemini.</p>
+                    <button
+                        type="button"
+                        onClick={onNavigateToPrivacy}
+                        className="mt-2 text-sm font-medium text-slate-500 hover:text-indigo-400 transition-colors duration-200"
+                    >
+                        Privacy Policy
+                    </button>
                 </footer>
             </div>
         </div>

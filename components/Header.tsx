@@ -8,9 +8,10 @@ interface HeaderProps {
     isAdmin: boolean;
     onNavigateToAdmin: () => void;
     onNavigateToAbout: () => void;
+    onNavigateToPrivacy: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ userEmail, onLogout, isAdmin, onNavigateToAdmin, onNavigateToAbout }) => {
+export const Header: React.FC<HeaderProps> = ({ userEmail, onLogout, isAdmin, onNavigateToAdmin, onNavigateToAbout, onNavigateToPrivacy }) => {
     return (
         <header className="bg-slate-900/70 backdrop-blur-sm sticky top-0 z-10 border-b border-slate-700">
             <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -28,6 +29,14 @@ export const Header: React.FC<HeaderProps> = ({ userEmail, onLogout, isAdmin, on
                     >
                         <InfoIcon className="w-4 h-4" />
                         <span className="hidden md:block">About</span>
+                    </button>
+                     <button
+                        onClick={onNavigateToPrivacy}
+                        className="flex items-center gap-2 text-slate-400 hover:text-slate-100 font-semibold py-2 px-3 rounded-md transition duration-200 ease-in-out text-sm"
+                        aria-label="Privacy Policy"
+                    >
+                        <ShieldCheckIcon className="w-4 h-4" />
+                        <span className="hidden md:block">Privacy</span>
                     </button>
                     <span className="text-sm text-slate-400 hidden sm:block">{userEmail}</span>
                     {isAdmin && (

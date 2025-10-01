@@ -6,20 +6,13 @@ import { OutputPanel } from './components/OutputPanel';
 import { InspirationShowcase } from './components/InspirationShowcase';
 import { AdminPanel } from './components/AdminPanel';
 import { generateVeoPrompt, generateImage } from './services/geminiService';
-import { TEMPLATES, PREDEFINED_EXAMPLES, SHOWCASE_VIDEOS, ADMIN_EMAIL, ADMIN_PASSWORD, FREE_USER_GENERATION_LIMIT, VISUAL_STYLES } from './constants';
+import { userService } from './services/userService';
+import { TEMPLATES, PREDEFINED_EXAMPLES, SHOWCASE_VIDEOS, ADMIN_EMAIL, FREE_USER_GENERATION_LIMIT, VISUAL_STYLES } from './constants';
 import { useHistoryState } from './hooks/useHistoryState';
 import { LoginPage } from './components/Auth';
 import { AboutPage } from './components/AboutPage';
-
-// Define the shape of our user and history states
-export type UserRole = 'admin' | 'free' | 'paid';
-
-export interface User {
-    email: string;
-    password: string;
-    role: UserRole;
-    confirmed: boolean;
-}
+import { PrivacyPolicyPage } from './components/PrivacyPolicyPage';
+import { User, UserRole, ReferenceImage, GenerationData, AppView } from './types';
 
 interface AppFormState {
     selectedTemplateId: string;
@@ -28,17 +21,7 @@ interface AppFormState {
     selectedStyleId: string | null;
 }
 
-interface GenerationData {
-    count: number;
-    lastResetDate: string;
-}
-
-type AppView = 'login' | 'app' | 'admin' | 'about';
-
-export interface ReferenceImage {
-    data: string;
-    mimeType: string;
-}
+const FORM_STATE_STORAGE_KEY = 'veoPromptArchitectFormState';
 
 const defaultCss = `/* Example: Style JSON elements */
 .json-formatter-container .string {
@@ -58,14 +41,39 @@ const defaultCss = `/* Example: Style JSON elements */
 }
 `;
 
-const App: React.FC = () => {
-    const initialState: AppFormState = {
+const loadInitialFormState = (): AppFormState => {
+    try {
+        const savedStateJSON = localStorage.getItem(FORM_STATE_STORAGE_KEY);
+        if (savedStateJSON) {
+            const savedState: Partial<AppFormState> = JSON.parse(savedStateJSON);
+            
+            // Validate that the saved template ID is still valid
+            const templateExists = TEMPLATES.some(t => t.id === savedState.selectedTemplateId);
+
+            if (templateExists && savedState.inputValues !== undefined) {
+                 return {
+                    selectedTemplateId: savedState.selectedTemplateId!,
+                    inputValues: savedState.inputValues || {},
+                    negativePrompt: savedState.negativePrompt || '',
+                    selectedStyleId: savedState.selectedStyleId || null,
+                };
+            }
+        }
+    } catch (error) {
+        console.error("Failed to load or parse form state from localStorage", error);
+        localStorage.removeItem(FORM_STATE_STORAGE_KEY); // Clear corrupted data
+    }
+    // Return default state if nothing is found or data is invalid
+    return {
         selectedTemplateId: TEMPLATES[0].id,
         inputValues: {},
         negativePrompt: '',
         selectedStyleId: null,
     };
+};
 
+
+const App: React.FC = () => {
     const {
         state: formState,
         set: setFormState,
@@ -73,7 +81,7 @@ const App: React.FC = () => {
         redo,
         canUndo,
         canRedo,
-    } = useHistoryState<AppFormState>(initialState);
+    } = useHistoryState<AppFormState>(loadInitialFormState());
 
     const [generatedJson, setGeneratedJson] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -87,7 +95,7 @@ const App: React.FC = () => {
     
     // Auth and View State
     const [userEmail, setUserEmail] = useState<string | null>(null);
-    const [allUsers, setAllUsers] = useState<User[]>([]);
+    const [allUsers, setAllUsers] = useState<User[]>(() => userService.getAllUsers());
     const [view, setView] = useState<AppView>('app');
     const [loginError, setLoginError] = useState<string | null>(null);
 
@@ -95,24 +103,23 @@ const App: React.FC = () => {
     const [generationData, setGenerationData] = useState<GenerationData>({ count: 0, lastResetDate: '' });
 
 
-    // Load initial state from localStorage
+    // Auto-save form state to localStorage
     useEffect(() => {
-        const storedEmail = localStorage.getItem('veoUserEmail');
+        try {
+            localStorage.setItem(FORM_STATE_STORAGE_KEY, JSON.stringify(formState));
+        } catch (error) {
+            console.error("Failed to save form state to localStorage", error);
+        }
+    }, [formState]);
+
+    // Load initial user auth state from localStorage
+    useEffect(() => {
+        const storedEmail = localStorage.getItem('veoUserEmail') || sessionStorage.getItem('veoUserEmail');
         if (storedEmail) {
             setUserEmail(storedEmail);
             setView('app');
         } else {
             setView('login');
-        }
-
-        const storedUsers = localStorage.getItem('veoAllUsers');
-        if (storedUsers) {
-            setAllUsers(JSON.parse(storedUsers));
-        } else {
-             // Seed with admin if no users exist
-            const adminUser: User = { email: ADMIN_EMAIL, password: ADMIN_PASSWORD, role: 'admin', confirmed: true };
-            localStorage.setItem('veoAllUsers', JSON.stringify([adminUser]));
-            setAllUsers([adminUser]);
         }
     }, []);
 
@@ -138,8 +145,8 @@ const App: React.FC = () => {
         setGenerationData(userGenData);
     }, [userEmail, currentUser]);
 
-    const handleLogin = (email: string, password: string) => {
-        const user = allUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+    const handleLogin = (email: string, password: string, rememberMe: boolean) => {
+        const user = userService.getUserByEmail(email);
 
         if (user) { // Existing user
             if (user.password === password) {
@@ -147,7 +154,11 @@ const App: React.FC = () => {
                     setLoginError("Your account is not confirmed. Please check your email for the confirmation link.");
                     return;
                 }
-                localStorage.setItem('veoUserEmail', email);
+                if (rememberMe) {
+                    localStorage.setItem('veoUserEmail', email);
+                } else {
+                    sessionStorage.setItem('veoUserEmail', email);
+                }
                 setUserEmail(email);
                 setView('app');
                 setLoginError(null);
@@ -155,10 +166,8 @@ const App: React.FC = () => {
                 setLoginError("Invalid password. Please try again.");
             }
         } else { // New user registration
-            const newUser: User = { email, password, role: 'free', confirmed: false };
-            const updatedUsers = [...allUsers, newUser];
-            setAllUsers(updatedUsers);
-            localStorage.setItem('veoAllUsers', JSON.stringify(updatedUsers));
+            userService.addUser({ email, password });
+            setAllUsers(userService.getAllUsers());
             
             // Show confirmation message instead of logging in
             setLoginError("Registration successful! A confirmation link has been sent to your email. Please verify your account to log in.");
@@ -167,19 +176,19 @@ const App: React.FC = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('veoUserEmail');
+        sessionStorage.removeItem('veoUserEmail');
         setUserEmail(null);
         setView('login');
     };
     
     const handleDeleteUser = (emailToDelete: string) => {
-        // Safety check, though UI should prevent this
         if (emailToDelete === ADMIN_EMAIL) {
             console.warn("Attempted to delete the primary admin account.");
             return;
         }
-        const updatedUsers = allUsers.filter(user => user.email !== emailToDelete);
-        setAllUsers(updatedUsers);
-        localStorage.setItem('veoAllUsers', JSON.stringify(updatedUsers));
+        if (userService.deleteUser(emailToDelete)) {
+            setAllUsers(userService.getAllUsers());
+        }
     };
     
     const handleUpdateUserRole = (emailToUpdate: string, newRole: UserRole) => {
@@ -187,19 +196,15 @@ const App: React.FC = () => {
             console.warn("Cannot change the primary admin's role.");
             return;
         }
-        const updatedUsers = allUsers.map(user => 
-            user.email === emailToUpdate ? { ...user, role: newRole } : user
-        );
-        setAllUsers(updatedUsers);
-        localStorage.setItem('veoAllUsers', JSON.stringify(updatedUsers));
+        if (userService.updateUserRole(emailToUpdate, newRole)) {
+            setAllUsers(userService.getAllUsers());
+        }
     };
     
     const handleConfirmUser = (emailToConfirm: string) => {
-        const updatedUsers = allUsers.map(user => 
-            user.email === emailToConfirm ? { ...user, confirmed: true } : user
-        );
-        setAllUsers(updatedUsers);
-        localStorage.setItem('veoAllUsers', JSON.stringify(updatedUsers));
+        if (userService.confirmUser(emailToConfirm)) {
+            setAllUsers(userService.getAllUsers());
+        }
     };
 
 
@@ -355,7 +360,12 @@ const App: React.FC = () => {
     
     // Conditional Rendering Logic
     if (view === 'login' || !userEmail || !currentUser) {
-        return <LoginPage onLogin={handleLogin} error={loginError} onClearError={() => setLoginError(null)} />;
+        return <LoginPage 
+                    onLogin={handleLogin} 
+                    error={loginError} 
+                    onClearError={() => setLoginError(null)}
+                    onNavigateToPrivacy={() => setView('privacy')}
+                />;
     }
     
     if (view === 'admin') {
@@ -373,6 +383,10 @@ const App: React.FC = () => {
         return <AboutPage onBackToApp={() => setView('app')} />;
     }
 
+    if (view === 'privacy') {
+        return <PrivacyPolicyPage onBack={() => setView(userEmail ? 'app' : 'login')} />;
+    }
+
 
     return (
         <div className="min-h-screen bg-slate-900 text-slate-200 font-sans flex flex-col">
@@ -382,6 +396,7 @@ const App: React.FC = () => {
                 isAdmin={currentUser.role === 'admin'}
                 onNavigateToAdmin={() => setView('admin')}
                 onNavigateToAbout={() => setView('about')}
+                onNavigateToPrivacy={() => setView('privacy')}
             />
             <main className="flex-grow container mx-auto p-4 md:p-8 flex flex-col gap-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">

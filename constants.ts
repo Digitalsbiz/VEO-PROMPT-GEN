@@ -48,7 +48,7 @@ export const TEMPLATES: Template[] = [
         template: `{
   "description": "Photorealistic cinematic sequence set in a pristine futuristic showroom. A sealed {{BRAND_NAME}}-branded crate rests center stage, softly illuminated. The crate vibrates gently—then unlocks with a soft *click*. As it opens, a wave of elegant visual energy bursts outward. Inside, {{PRODUCT_NAME}} components begin assembling mid-air with precision and elegance: {{PRODUCT_ELEMENTS}}. The entire scene feels like a ritual of innovation and refinement, showcasing the product's essence without using any text.",
   "style": "photorealistic cinematic, premium minimalism",
-  "camera": "starts with a slow push-in on the crate, then orbits as panels open; transitions into top-down reveal as products assemble mid-air",
+  "camera": "starts with a dramatic extreme close-up on the crate's lock, transitions into a slow dolly push-in, then orbits as panels open; culminates in a majestic top-down crane shot to reveal products assembling mid-air",
   "lighting": "controlled, high-end ambient lighting with soft spot highlights; background glows in neutral tones (white/silver/graphite) to emphasize the product shine",
   "environment": "minimalist futuristic showroom with seamless white or metallic surfaces, ambient reflections, and subtle fog or mist to add dimensionality",
   "elements": [
@@ -83,7 +83,7 @@ export const TEMPLATES: Template[] = [
         template: `{
   "description": "A sweeping aerial shot glides over misty mountains and vast emerald valleys. Ancient stone ruins rise from the earth, bathed in golden sunrise. At the center of a grand courtyard, a colossal stone altar rests — its carvings pulsing faintly. As a deep choir hums, the stone cracks apart to reveal {{PRODUCT_NAME}}, floating in a sphere of golden light. Runes swirl around it, casting beams into the sky. Far away, kingdoms awaken — banners unfurl, waterfalls surge, dragons soar past towering citadels. Magic storms spiral over oceans as the world reacts to the relic’s return. Knights, wizards, and entire armies gather at the altar in awe. The camera sweeps in as the product descends gently onto a pedestal made of crystal, its glow illuminating the faces of those gathered. The world has changed forever.",
   "style": "cinematic, high-fantasy, ultra-realistic magical realism",
-  "camera": "starts with a sweeping aerial dolly over the landscape; dives down to circle the altar; orbiting crane shot around the relic as magic erupts; fast aerial pullbacks to reveal entire world transformations; ends with a slow dramatic zoom on product",
+  "camera": "opens with a grand establishing shot of the landscape using a sweeping aerial dolly; dives to circle the altar; uses an orbiting crane shot for the relic reveal as magic erupts; fast aerial pullbacks show world transformations; ends with a dramatic dolly zoom on the product, making the background expand with magical energy",
   "lighting": "warm golden dawn over landscapes; magical beams and soft volumetric god rays at altar; deep saturated colors for kingdoms; stormy blues and purples for magic surges; soft white-gold halo for final product display",
   "environment": "mountain valleys, ancient ruins, royal kingdoms, stormy oceans, magical skies",
   "elements": [
@@ -119,7 +119,7 @@ export const TEMPLATES: Template[] = [
         template: `{
   "description": "Nighttime in a neon-lit city — rain slick streets reflect holographic ads. A black briefcase handcuffed to an agent’s wrist cuts through a crowded market. Surveillance drones track him. Suddenly, a high-speed chase erupts — parkour over rooftops, weaving through traffic, sprinting down subway tunnels. The briefcase hums louder and louder until the agent bursts into a rooftop helipad surrounded by skyscrapers. A stealth chopper hovers overhead, spotlight blinding. He slams the briefcase onto a table — biometric locks scan and release with a hiss. Inside, bathed in cold blue light, is {{PRODUCT_NAME}}. The city’s power grid surges, all holographic billboards flipping to its image. The agent disappears into the night as the product hovers in the air, rain cascading off its edges.",
   "style": "high-contrast, gritty neon realism, cinematic spy thriller",
-  "camera": "handheld chase shots, low-angle tracking through crowds, FPV rooftop jumps, whip-pans into slow motion for critical moments, final crane-up reveal from product to full city skyline",
+  "camera": "frantic handheld tracking shots and disorienting Dutch angles for chase sequences; low-angle tracking through crowds, FPV rooftop jumps, whip-pans into slow motion; final crane shot reveals the product, then lifts to show the full city skyline",
   "lighting": "neon pinks, blues, and greens reflecting in wet streets; harsh white spotlights from drones; cold blue glow for product reveal",
   "environment": "dense futuristic city, neon marketplaces, rooftops, helipad surrounded by skyscrapers",
   "elements": [
@@ -153,7 +153,7 @@ export const TEMPLATES: Template[] = [
         template: `{
   "description": "Cinematic ultra-close-up of a {{BRAND_NAME}} {{PRODUCT_NAME}} bottle resting delicately on a polished marble pedestal in an empty, misty hall. Dew-like droplets glisten on the glass. The bottle subtly shimmers-then the perfume spritzes in slow motion. From the mist, silk fabrics flow outward, forming ethereal dresses that float mid-air. Petals blossom and spiral upward, creating an enchanted garden suspended in time. Walls dissolve into open sky. A chandelier of stars assembles above. A luminous figure, representing elegance, dances through the floating petals as fragrance waves ripple through the scene. The entire space transforms into an otherworldly {{BRAND_NAME}} dreamscape. No text.",
   "style": "cinematic, elegant magical realism",
-  "camera": "starts with an intimate macro shot of the bottle surface and droplets, slowly dollies back while orbiting, then cranes upward to reveal the full ethereal transformation in sweeping, graceful motion",
+  "camera": "begins with an intimate extreme close-up on droplets, then slowly dollies back while orbiting the bottle; transitions to a sweeping crane shot that rises to reveal the full ethereal transformation in one graceful, continuous motion",
   "lighting": "soft morning light transitioning into golden glow, ending with a moonlit sparkle across the scene",
   "environment": "quiet marble hall transforms into an infinite floating garden above the clouds",
   "elements": [
@@ -192,190 +192,63 @@ export const TEMPLATES: Template[] = [
         template: `{
   "description": "An elegant, high-end animated sequence on a seamless soft white background. A minimalist {{BRAND_NAME}}-branded box levitates gently, opening with a slow, graceful motion. The {{PRODUCT_NAME}} floats out, its key features assembling with precision. {{KEY_FEATURES}}. Silver, space gray, and ceramic white tones dominate, creating a refined, sophisticated mood. No hard cuts—only smooth, continuous movement.",
   "style": "cinematic, premium minimalism, Apple aesthetic",
-  "camera": "starts ultra close on embossed brand logo, gentle dolly out with floating camera motion, subtle parallax for depth, macro shots on key features",
+  "camera": "starts with an elegant extreme close-up on the embossed brand logo; a gentle dolly out combined with a floating orbital motion for depth; transitions into intimate macro shots on key features as they assemble",
   "lighting": "soft, diffused illumination with delicate reflections and shadows, evoking a calm premium feel",
-  "environment": "infinite seamless white environment—no walls, no floor—just soft gradients and floating products",
+  "environment": "seamless, infinite soft white or light gray background with subtle gradients",
   "elements": [
-    "{{BRAND_NAME}}-branded box (subtle emboss, matte finish)",
-    "{{PRODUCT_NAME}} with subtle edge glow animation",
-    "{{KEY_FEATURES}} animating into place",
-    "no extra decor—pure focus on the product"
-  ],
-  "motion": "Box levitates gently, opens in a slow, elegant lift. Product floats up, rotates gracefully, and assembles itself with seamless, natural motion—no sharp cuts.",
-  "ending": "Perfectly assembled {{PRODUCT_NAME}} displayed in a soft white space. Brand logo fades in with delicate typography.",
-  "text": "{{BRAND_NAME}} - {{PRODUCT_NAME}}",
-  "keywords": [
-    "{{BRAND_NAME}}",
+    "{{BRAND_NAME}} box (matte texture, embossed logo)",
     "{{PRODUCT_NAME}}",
-    "minimalistic",
-    "premium aesthetic",
-    "silver, white, space gray",
-    "fluid assembly",
-    "elegant motion",
-    "soft lighting",
-    "tech reveal"
-  ]
-}`
-    },
-    {
-        id: 'food-ad',
-        name: '6. Dynamic Food Ad',
-        template: `{
-  "description": "A cinematic, vibrant shot in a sun-drenched kitchen. A {{BRAND_NAME}} {{FOOD_ITEM}} is the star. In gravity-defying slow motion, fresh ingredients twirl mid-air: {{INGREDIENTS}}. They assemble into a picture-perfect dish on a rustic wooden table, showcasing its delicious, {{TASTE_PROFILE}} nature.",
-  "style": "photorealistic cinematic, sensory-rich, warm and inviting",
-  "camera": "slow orbital shot from low angle upward, transitioning into an overhead top-down reveal, with extreme close-ups on textures",
-  "lighting": "morning sunlight streaming through soft white curtains, gentle glow on food highlights",
-  "environment": "cozy kitchen or rustic dining setting with natural textures",
-  "elements": [
-    "{{FOOD_ITEM}} as the centerpiece",
-    "{{INGREDIENTS}} flying and swirling through the air",
-    "liquid splashes (e.g., olive oil, syrup) captured in slow motion",
-    "steam rising from the finished dish",
-    "garnishes gently falling into place"
+    "{{KEY_FEATURES}}",
+    "gentle light refractions and lens flares",
+    "subtle particle effects to enhance motion",
+    "minimalist iconography for feature callouts (optional, animated)"
   ],
-  "motion": "Ingredients erupt upward in a beautiful vortex, assembling the final dish mid-air before it gently lands on the plate. Camera moves through the floating elements.",
-  "ending": "A beautifully arranged {{FOOD_ITEM}} sits steaming on the table, glistening in the sunlight. A final ingredient (e.g., herb, nut) rolls slowly to a stop.",
+  "motion": "slow, deliberate, and continuous movement; box panels unfold elegantly; components assemble with magnetic precision; product gently rotates in a hero shot",
+  "ending": "fully assembled {{PRODUCT_NAME}} floats in the center, perfectly lit, with a subtle shadow underneath to give it weight and presence",
   "text": "none",
   "keywords": [
     "{{BRAND_NAME}}",
-    "{{FOOD_ITEM}}",
-    "food ad",
-    "slow motion",
-    "delicious",
-    "fresh ingredients",
-    "cinematic food",
-    "high detail",
+    "{{PRODUCT_NAME}}",
+    "tech unboxing",
+    "minimalist animation",
+    "premium design",
+    "clean aesthetic",
+    "Apple-style",
+    "3D animation",
     "no text"
   ]
 }`
     },
-    {
-        id: 'nature-documentary',
-        name: '7. Epic Nature Documentary Scene',
+     {
+        id: 'food-ad',
+        name: '6. Delicious Food Ad',
+        premium: true,
         template: `{
-  "description": "A sweeping, cinematic aerial shot reveals the vast, untouched landscape of {{LOCATION}}. The camera descends, finding our subject: a majestic {{ANIMAL_SUBJECT}}. We witness a breathtaking moment as the animal {{ACTION}}. The scene captures the raw beauty and drama of the natural world, highlighting {{ENVIRONMENT_DETAILS}}.",
-  "style": "cinematic, ultra-realistic, epic nature documentary",
-  "camera": "starts with a sweeping aerial dolly over the landscape; transitions to a long-lens ground shot to create intimacy; uses slow-motion to emphasize key actions",
-  "lighting": "natural golden hour or dramatic storm lighting to enhance the mood",
-  "environment": "{{LOCATION}} with rich details like {{ENVIRONMENT_DETAILS}}",
+  "description": "Extreme macro shot of {{MAIN_INGREDIENT}} being prepared in slow-motion: chopped, grilled, or drizzled with sauce. Water droplets or steam rise gracefully. The camera pulls back to reveal a beautifully plated dish of {{DISH_NAME}}, with fresh ingredients like {{FRESH_GARNISHES}} scattered around. The entire scene is set on a rustic wooden table, with soft, natural light coming from a nearby window.",
+  "style": "cinematic food videography, high-speed camera, macro details",
+  "camera": "starts with extreme macro shots, using a probe lens to get intimate details; transitions to a slow, orbiting motion around the final plated dish; uses a top-down flat lay for the final shot",
+  "lighting": "soft, natural window light; a single key light to create appetizing highlights and shadows",
+  "environment": "warm, rustic kitchen or dining setting with natural textures like wood and slate",
   "elements": [
-    "{{ANIMAL_SUBJECT}} in its natural habitat",
-    "The landscape of {{LOCATION}}",
-    "Other native flora and fauna to build the ecosystem",
-    "Weather elements (e.g., mist, rain, intense sun)"
+    "{{MAIN_INGREDIENT}} (close-up details)",
+    "{{DISH_NAME}} (fully plated)",
+    "{{FRESH_GARNISHES}}",
+    "slow-motion cooking actions (sizzling, drizzling, steaming)",
+    "water droplets or steam",
+    "rustic wooden table and background elements"
   ],
-  "motion": "Slow, patient camera movements. A mix of real-time and slow-motion footage to capture the intensity and grace of the animal's {{ACTION}}.",
-  "ending": "The {{ANIMAL_SUBJECT}} continues its journey, disappearing into the vast landscape as the camera pulls back, leaving the viewer in awe of nature's scale.",
+  "motion": "ultra slow-motion for food preparation; gentle, smooth camera movements around the final dish; ingredients falling onto the plate in a controlled, artistic way",
+  "ending": "a top-down shot of the perfectly arranged {{DISH_NAME}}, with a hand reaching in with a fork to take the first bite, just before contact",
   "text": "none",
   "keywords": [
-    "nature documentary",
-    "wildlife",
-    "{{ANIMAL_SUBJECT}}",
-    "{{LOCATION}}",
-    "cinematic",
-    "epic",
-    "natural world",
-    "slow motion"
-  ]
-}`
-    },
-    {
-        id: 'sci-fi-trailer',
-        name: '8. Sci-Fi Blockbuster Trailer',
-        premium: true,
-        template: `{
-  "description": "A high-octane sci-fi trailer. Opens with a silent, vast shot of a nebula. A distress signal flickers. Cut to the gleaming metropolis of {{CITY_NAME}} on {{PLANET_NAME}}, a utopia under threat. We see the protagonist, {{PROTAGONIST_DESCRIPTION}}, discovering a cryptic alien artifact. The artifact activates, unleashing chaos. The menacing fleet of the {{ANTAGONIST_RACE}} darkens the sky. Quick cuts of epic space battles, advanced {{TECHNOLOGY_TYPE}} being deployed, and desperate ground fights. The fate of the galaxy hangs in the balance.",
-  "style": "cinematic, epic sci-fi, high-contrast, blockbuster trailer feel",
-  "camera": "sweeping establishing shots of space and cities, frantic handheld shots during action, dramatic slow-motion on key reveals, rapid-fire editing",
-  "lighting": "lens flares, neon city lights, harsh explosions, cold metallic blues for alien ships, warm hopeful light for protagonist moments",
-  "environment": "dazzling futuristic city, desolate alien landscapes, claustrophobic starship interiors, vastness of space",
-  "elements": [
-    "gleaming metropolis of {{CITY_NAME}}",
-    "protagonist: {{PROTAGONIST_DESCRIPTION}}",
-    "cryptic alien artifact",
-    "menacing {{ANTAGONIST_RACE}} mothership and fighter fleet",
-    "advanced {{TECHNOLOGY_TYPE}} (e.g., energy shields, plasma cannons)",
-    "large-scale space and ground battles"
-  ],
-  "motion": "fast-paced cuts, explosive action, dramatic push-ins on character faces, smooth fly-throughs of massive structures",
-  "ending": "A final, epic standoff. The protagonist faces the alien leader. Title card smash. Black screen.",
-  "text": "{{MOVIE_TITLE}} - Coming Soon",
-  "keywords": [
-    "sci-fi",
-    "space opera",
-    "alien invasion",
-    "futuristic city",
-    "epic trailer",
-    "blockbuster",
-    "{{PLANET_NAME}}",
-    "cinematic"
-  ]
-}`
-    },
-    {
-        id: 'historical-drama',
-        name: '9. Historical Drama Epic',
-        premium: true,
-        template: `{
-  "description": "A cinematic journey into the heart of the {{HISTORICAL_ERA}}. We open on the sprawling capital of the {{EMPIRE_NAME}}, filled with period-accurate architecture and crowds. We follow {{MAIN_CHARACTER_DESCRIPTION}}, a figure destined for greatness or tragedy. The scene captures the political intrigue, societal tensions, and grand scale of the era, focusing on a pivotal {{HISTORICAL_EVENT}}. Lavish costumes, grand halls, and gritty battlefields paint a vivid picture of a bygone world.",
-  "style": "cinematic, historical realism, painterly visuals, grand scale",
-  "camera": "majestic crane shots over cities and armies, intimate, candlelit close-ups during dialogue scenes, visceral, shaky-cam for battles",
-  "lighting": "naturalistic, using sunlight, firelight, and candlelight to create a rich, textured atmosphere; deep shadows for dramatic intrigue",
-  "environment": "grand palaces, bustling medieval markets, muddy battlefields, opulent throne rooms",
-  "elements": [
-    "the capital of the {{EMPIRE_NAME}}",
-    "{{MAIN_CHARACTER_DESCRIPTION}}",
-    "pivotal historical event: {{HISTORICAL_EVENT}}",
-    "period-accurate costumes and props",
-    "armies clashing in formation",
-    "scenes of royal court and political maneuvering"
-  ],
-  "motion": "a blend of slow, deliberate pacing for dramatic scenes and chaotic, intense motion for action sequences; sweeping pans across landscapes",
-  "ending": "{{MAIN_CHARACTER_DESCRIPTION}} makes a fateful decision, the consequences of which will echo through history. The camera lingers on their face before fading to black.",
-  "text": "none",
-  "keywords": [
-    "historical drama",
-    "epic",
-    "{{HISTORICAL_ERA}}",
-    "{{EMPIRE_NAME}}",
-    "period piece",
-    "cinematic",
-    "battle",
-    "intrigue"
-  ]
-}`
-    },
-    {
-        id: 'fashion-lookbook',
-        name: '10. High-Fashion Lookbook',
-        premium: true,
-        template: `{
-  "description": "An avant-garde, cinematic fashion film for the '{{COLLECTION_NAME}}' collection. A model, {{MODEL_DESCRIPTION}}, moves through a surreal, {{LOCATION_AESTHETIC}} landscape. The film is a series of striking, artistic vignettes, each showcasing a key look. The focus is on texture, movement, and mood. We see extreme close-ups of {{FABRIC_DETAILS}} and the intricate design of {{CLOTHING_PIECES}}. The atmosphere is dreamlike and evocative, more art film than commercial.",
-  "style": "surreal, avant-garde, highly stylized, editorial fashion",
-  "camera": "unconventional framing, slow-motion, artistic focus pulls, static portrait-like shots contrasted with fluid, dancing movements",
-  "lighting": "dramatic, high-contrast lighting; using colored gels, hard shadows, and soft, ethereal glows to create a mood",
-  "environment": "surreal and artistic location, such as {{LOCATION_AESTHETIC}} (e.g., a brutalist concrete structure, a salt flat at sunset, an overgrown gothic greenhouse)",
-  "elements": [
-    "model: {{MODEL_DESCRIPTION}}",
-    "key looks from the '{{COLLECTION_NAME}}' collection",
-    "close-ups on fabric textures: {{FABRIC_DETAILS}}",
-    "showcase of specific {{CLOTHING_PIECES}}",
-    "artistic props that complement the theme",
-    "abstract visual motifs (e.g., water, smoke, mirrors)"
-  ],
-  "motion": "hypnotic, deliberate movements; fabric flowing in the wind; slow-motion captures of subtle gestures and expressions",
-  "ending": "A final, powerful portrait shot of the model in the hero outfit. The brand logo appears subtly on screen.",
-  "text": "{{BRAND_NAME}} - {{COLLECTION_NAME}}",
-  "keywords": [
-    "fashion film",
-    "lookbook",
-    "avant-garde",
-    "haute couture",
-    "editorial",
-    "surreal",
-    "cinematic",
-    "{{BRAND_NAME}}",
-    "{{COLLECTION_NAME}}"
+    "food videography",
+    "cinematic food",
+    "macro shots",
+    "slow-motion",
+    "delicious",
+    "{{DISH_NAME}}",
+    "fresh ingredients",
+    "no text"
   ]
 }`
     }
@@ -383,86 +256,91 @@ export const TEMPLATES: Template[] = [
 
 export const PREDEFINED_EXAMPLES: Example[] = [
     {
-        id: 'tesla-cybertruck',
-        name: 'Tesla Cybertruck Launch',
+        id: 'ex-smartwatch',
+        name: 'Smartwatch Crate Opening',
         templateId: 'crate-opening',
         values: {
-            BRAND_NAME: 'Tesla',
-            PRODUCT_NAME: 'Cybertruck',
-            PRODUCT_ELEMENTS: 'Exoskeleton frame\nArmor glass panels\nCyber-style wheels',
-            SUPPORTING_VISUAL_PROPS: 'Laser grid lines\nArc flashes\nMetallic dust particles',
-        },
+            BRAND_NAME: 'Aura',
+            PRODUCT_NAME: 'Aura-Band Pro',
+            PRODUCT_ELEMENTS: 'glossy black watch face, titanium alloy casing, woven nylon strap',
+            SUPPORTING_VISUAL_PROPS: 'geometric light patterns, soft energy waves'
+        }
     },
     {
-        id: 'dior-j-adore',
-        name: `Dior J'adore Perfume`,
+        id: 'ex-dior-perfume',
+        name: 'Dior-Style Perfume Ad',
         templateId: 'dior-perfume',
         values: {
             BRAND_NAME: 'Dior',
-            PRODUCT_NAME: `J'adore Eau de Parfum`,
-        },
+            PRODUCT_NAME: 'J\'adore'
+        }
     },
     {
-        id: 'apple-vision-pro',
-        name: 'Apple Vision Pro Unboxing',
+        id: 'ex-iphone-unboxing',
+        name: 'Apple-Style iPhone Unboxing',
         templateId: 'tech-unboxing',
         values: {
             BRAND_NAME: 'Apple',
-            PRODUCT_NAME: 'Vision Pro',
-            KEY_FEATURES: 'Laminated glass front\nAluminum alloy frame\nLight Seal and Head Band clicking into place',
-        },
-    },
-    {
-        id: 'nutella-swirl',
-        name: 'Nutella Breakfast Ad',
-        templateId: 'food-ad',
-        values: {
-            BRAND_NAME: 'Nutella',
-            FOOD_ITEM: 'Pancakes with Nutella',
-            INGREDIENTS: 'Swirling chocolate-hazelnut spread\nRoasted hazelnuts\nFresh strawberries\nSlices of banana',
-            TASTE_PROFILE: 'rich and decadent',
+            PRODUCT_NAME: 'iPhone 15 Pro',
+            KEY_FEATURES: 'A17 Pro Chip, Dynamic Island, Titanium Frame'
         }
     },
-     {
-        id: 'patagonia-wolf',
-        name: 'Patagonia Wolf Documentary',
-        templateId: 'nature-documentary',
+    {
+        id: 'ex-burger-ad',
+        name: 'Gourmet Burger Ad',
+        templateId: 'food-ad',
         values: {
-            LOCATION: 'Patagonia',
-            ANIMAL_SUBJECT: 'Gray Wolf',
-            ACTION: 'howls at the rising moon',
-            ENVIRONMENT_DETAILS: 'snow-capped peaks, ancient forests, and icy blue rivers',
+            MAIN_INGREDIENT: 'a thick, juicy beef patty',
+            DISH_NAME: 'The Ultimate Bacon Cheeseburger',
+            FRESH_GARNISHES: 'crispy lettuce, ripe tomatoes, melted cheddar cheese'
+        }
+    },
+    {
+        id: 'ex-relic-reveal',
+        name: 'Fantasy Relic Reveal',
+        templateId: 'fantasy-epic',
+        values: {
+            PRODUCT_NAME: 'The Chronos Sphere'
+        }
+    },
+    {
+        id: 'ex-cyber-headset',
+        name: 'Cyberpunk Headset Thriller',
+        templateId: 'action-thriller',
+        values: {
+            PRODUCT_NAME: 'Neuralink X-1 Headset'
         }
     }
 ];
 
+
 export const SHOWCASE_VIDEOS: ShowcaseVideo[] = [
     {
-        id: 'showcase-1',
-        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-        title: 'Futuristic Product Reveal',
-        description: 'A sleek, minimalist reveal perfect for high-tech products, inspired by our Crate-Opening template.',
-        exampleId: 'tesla-cybertruck',
-    },
-    {
-        id: 'showcase-2',
-        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-        title: 'Luxury Perfume Commercial',
-        description: 'Capture elegance and magic with ethereal visuals, based on the Elegant Perfume Ad Style.',
-        exampleId: 'dior-j-adore',
-    },
-    {
-        id: 'showcase-3',
-        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-        title: 'Epic Wildlife Scene',
-        description: 'Create breathtaking nature shots that tell a powerful story, using the Nature Documentary template.',
-        exampleId: 'patagonia-wolf',
-    },
-    {
-        id: 'showcase-4',
+        id: 'vid1',
         videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
-        title: 'Dynamic Food Advertisement',
-        description: 'Make mouths water with vibrant, slow-motion ingredients, built from our Dynamic Food Ad template.',
-        exampleId: 'nutella-swirl',
+        title: 'Aura Smartwatch',
+        description: 'A futuristic crate-opening sequence revealing a sleek new smartwatch.',
+        exampleId: 'ex-smartwatch'
     },
+    {
+        id: 'vid2',
+        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+        title: 'Fantasy Relic: The Chronos Sphere',
+        description: 'An epic, world-changing reveal of a mythical artifact in a fantasy setting.',
+        exampleId: 'ex-relic-reveal'
+    },
+    {
+        id: 'vid3',
+        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+        title: 'Neuralink Headset',
+        description: 'A high-octane chase through a neon-drenched city to deliver a classified piece of tech.',
+        exampleId: 'ex-cyber-headset'
+    },
+    {
+        id: 'vid4',
+        videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+        title: 'Ultimate Cheeseburger',
+        description: 'A delicious, slow-motion look at the creation of a gourmet burger.',
+        exampleId: 'ex-burger-ad'
+    }
 ];

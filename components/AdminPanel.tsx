@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { UsersIcon, TrashIcon, AlertTriangleIcon } from './icons';
 import { ADMIN_EMAIL } from '../constants';
-import { User, UserRole } from '../App';
+import { User, UserRole } from '../types';
 
 interface AdminPanelProps {
     users: User[];

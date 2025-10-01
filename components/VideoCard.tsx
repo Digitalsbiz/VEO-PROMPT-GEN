@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { PlayIcon, PauseIcon, Volume2Icon, VolumeXIcon, LockIcon } from './icons';
-import { UserRole } from '../App';
+import { UserRole } from '../types';
 import { Tooltip } from './Tooltip';
 
 interface VideoCardProps {

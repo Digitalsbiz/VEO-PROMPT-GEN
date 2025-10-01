@@ -4,7 +4,7 @@ import { Template, Example, FREE_USER_GENERATION_LIMIT, VisualStyle } from '../c
 import { MagicWandIcon, ImageIcon, XCircleIcon, SparklesIcon, AlertTriangleIcon, BanIcon, PaletteIcon } from './icons';
 import { HistoryControls } from './HistoryControls';
 import { Tooltip } from './Tooltip';
-import { UserRole, ReferenceImage } from '../App';
+import { UserRole, ReferenceImage } from '../types';
 
 
 interface InputPanelProps {
@@ -312,4 +312,69 @@ export const InputPanel: React.FC<InputPanelProps> = ({
                         </div>
                     </details>
 
-                    <div className="text-center text
+                    <div className="text-center text-slate-500 text-sm">or</div>
+
+                    <div className="flex flex-col items-center gap-4">
+                        {referenceImage ? (
+                            <div className="relative">
+                                <img
+                                    src={`data:${referenceImage.mimeType};base64,${referenceImage.data}`}
+                                    alt="Reference"
+                                    className="w-48 h-48 object-cover rounded-lg border-2 border-slate-600"
+                                />
+                                <button
+                                    onClick={handleRemoveImage}
+                                    className="absolute -top-2 -right-2 bg-slate-700 hover:bg-red-600 text-white rounded-full p-1 transition-colors"
+                                    aria-label="Remove reference image"
+                                >
+                                    <XCircleIcon className="w-6 h-6" />
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="w-full border-2 border-dashed border-slate-600 rounded-lg p-8 flex flex-col items-center justify-center text-center">
+                                <ImageIcon className="w-10 h-10 text-slate-500 mb-2" />
+                                <span className="text-slate-400 mb-2">Upload an image</span>
+                                <button
+                                    onClick={handleImageUploadClick}
+                                    className="bg-slate-700 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md transition duration-200 ease-in-out text-sm"
+                                >
+                                    Choose File
+                                </button>
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleFileChange}
+                                    className="hidden"
+                                    accept="image/png, image/jpeg, image/webp"
+                                />
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </details>
+
+            <div className="border-t border-slate-700 pt-6">
+                 {isFreeUser && (
+                    <div className="text-center text-sm text-slate-400 mb-4 bg-slate-900/50 p-3 rounded-lg border border-slate-700">
+                        You have <span className="font-bold text-amber-300">{remainingGenerations}</span> free generation{remainingGenerations !== 1 ? 's' : ''} remaining today.
+                    </div>
+                )}
+                <button
+                    onClick={onGenerate}
+                    disabled={isLoading || limitReached}
+                    className="w-full flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded-md transition duration-200 ease-in-out disabled:bg-indigo-800 disabled:cursor-not-allowed transform hover:scale-105"
+                >
+                    {isLoading ? (
+                         <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    ) : (
+                        <MagicWandIcon className="w-5 h-5 mr-2" />
+                    )}
+                    <span>{isLoading ? 'Generating...' : 'Generate Prompt'}</span>
+                </button>
+            </div>
+        </div>
+    );
+};

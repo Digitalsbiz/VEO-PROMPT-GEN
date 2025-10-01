@@ -3,7 +3,7 @@ import React from 'react';
 import { ShowcaseVideo } from '../constants';
 import { VideoCard } from './VideoCard';
 import { LightbulbIcon } from './icons';
-import { UserRole } from '../App';
+import { UserRole } from '../types';
 
 interface InspirationShowcaseProps {
     videos: ShowcaseVideo[];
