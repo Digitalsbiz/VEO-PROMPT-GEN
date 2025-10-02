@@ -1,4 +1,5 @@
 
+
 export interface Template {
     id: string;
     name: string;
@@ -38,6 +39,9 @@ export const VISUAL_STYLES: VisualStyle[] = [
     { id: 'impressionism', name: 'Impressionism' },
     { id: 'minimalist', name: 'Minimalist' },
     { id: 'steampunk', name: 'Steampunk' },
+    { id: 'dreamy', name: 'Dreamy' },
+    { id: 'gritty', name: 'Gritty' },
+    { id: 'retro-futuristic', name: 'Retro Futuristic' },
 ];
 
 
