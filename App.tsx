@@ -1,11 +1,13 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, browserSessionPersistence, sendEmailVerification } from 'firebase/auth';
+import { auth } from './services/firebase';
+import { firestoreService } from './services/firestoreService';
 import { Header } from './components/Header';
 import { InputPanel } from './components/InputPanel';
 import { OutputPanel } from './components/OutputPanel';
 import { InspirationShowcase } from './components/InspirationShowcase';
 import { AdminPanel } from './components/AdminPanel';
-import { generateVeoPrompt, generateImage } from './services/geminiService';
-import { userService } from './services/userService';
+import { generateVeoPrompt, generateImage, generateStoryboardPrompts } from './services/geminiService';
 import { TEMPLATES, PREDEFINED_EXAMPLES, SHOWCASE_VIDEOS, ADMIN_EMAIL, FREE_USER_GENERATION_LIMIT, VISUAL_STYLES } from './constants';
 import { useHistoryState } from './hooks/useHistoryState';
 import { LoginPage } from './components/Auth';
@@ -46,7 +48,6 @@ const loadInitialFormState = (): AppFormState => {
         if (savedStateJSON) {
             const savedState: Partial<AppFormState> = JSON.parse(savedStateJSON);
             
-            // Validate that the saved template ID is still valid
             const templateExists = TEMPLATES.some(t => t.id === savedState.selectedTemplateId);
 
             if (templateExists && savedState.inputValues !== undefined) {
@@ -60,9 +61,8 @@ const loadInitialFormState = (): AppFormState => {
         }
     } catch (error) {
         console.error("Failed to load or parse form state from localStorage", error);
-        localStorage.removeItem(FORM_STATE_STORAGE_KEY); // Clear corrupted data
+        localStorage.removeItem(FORM_STATE_STORAGE_KEY);
     }
-    // Return default state if nothing is found or data is invalid
     return {
         selectedTemplateId: TEMPLATES[0].id,
         inputValues: {},
@@ -88,21 +88,21 @@ const App: React.FC = () => {
     const [customCss, setCustomCss] = useState<string>(defaultCss);
     const [referenceImage, setReferenceImage] = useState<ReferenceImage | null>(null);
 
-    // Image Generation State
     const [isGeneratingImage, setIsGeneratingImage] = useState<boolean>(false);
     const [imageGenerationError, setImageGenerationError] = useState<string | null>(null);
     
-    // Auth and View State
-    const [userEmail, setUserEmail] = useState<string | null>(null);
-    const [allUsers, setAllUsers] = useState<User[]>(() => userService.getAllUsers());
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
+    const [allUsers, setAllUsers] = useState<User[]>([]);
     const [view, setView] = useState<AppView>('app');
     const [loginError, setLoginError] = useState<string | null>(null);
 
-    // Generation limit state
     const [generationData, setGenerationData] = useState<GenerationData>({ count: 0, lastResetDate: '' });
+    
+    const [storyboardImages, setStoryboardImages] = useState<ReferenceImage[]>([]);
+    const [isGeneratingStoryboard, setIsGeneratingStoryboard] = useState<boolean>(false);
+    const [storyboardError, setStoryboardError] = useState<string | null>(null);
 
-
-    // Auto-save form state to localStorage
     useEffect(() => {
         try {
             localStorage.setItem(FORM_STATE_STORAGE_KEY, JSON.stringify(formState));
@@ -111,107 +111,145 @@ const App: React.FC = () => {
         }
     }, [formState]);
 
-    // Load initial user auth state from localStorage
     useEffect(() => {
-        const storedEmail = localStorage.getItem('veoUserEmail') || sessionStorage.getItem('veoUserEmail');
-        if (storedEmail) {
-            setUserEmail(storedEmail);
-            setView('app');
-        } else {
+        if (!auth) {
+            setIsAuthLoading(false);
+            setCurrentUser(null);
             setView('login');
+            setLoginError("Firebase authentication is not configured. Please contact the administrator.");
+            return;
         }
+
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            if (firebaseUser) {
+                const userProfile = await firestoreService.getUserProfile(firebaseUser.uid);
+                if (userProfile) {
+                    setCurrentUser({
+                        uid: firebaseUser.uid,
+                        email: firebaseUser.email || '',
+                        emailVerified: firebaseUser.emailVerified,
+                        role: userProfile.role,
+                    });
+                     if (!firebaseUser.emailVerified && userProfile.role !== 'admin') {
+                        // Keep them on a page where they can be notified
+                        // but allow app access for now. Could be stricter.
+                    }
+                    setView('app');
+                } else {
+                    // Profile doesn't exist, create it. This can happen on first sign-up.
+                    if (firebaseUser.email) {
+                        await firestoreService.createUserProfile(firebaseUser.uid, firebaseUser.email);
+                        const newUserProfile = await firestoreService.getUserProfile(firebaseUser.uid);
+                        if (newUserProfile) {
+                            setCurrentUser({
+                                uid: firebaseUser.uid,
+                                email: firebaseUser.email,
+                                emailVerified: firebaseUser.emailVerified,
+                                role: newUserProfile.role,
+                            });
+                            setView('app');
+                        }
+                    }
+                }
+            } else {
+                setCurrentUser(null);
+                setView('login');
+            }
+            setIsAuthLoading(false);
+        });
+        return () => unsubscribe();
     }, []);
 
-    const currentUser = useMemo(() => allUsers.find(u => u.email === userEmail), [allUsers, userEmail]);
-
-    // Load and manage generation count for the current user
     useEffect(() => {
-        if (!userEmail || !currentUser) return;
+        if (!currentUser) return;
 
         const storedGenerationsJSON = localStorage.getItem('veoUserGenerations');
-        const allGenerations: { [email: string]: GenerationData } = storedGenerationsJSON ? JSON.parse(storedGenerationsJSON) : {};
+        const allGenerations: { [uid: string]: GenerationData } = storedGenerationsJSON ? JSON.parse(storedGenerationsJSON) : {};
         
-        let userGenData = allGenerations[userEmail] || { count: 0, lastResetDate: '' };
+        let userGenData = allGenerations[currentUser.uid] || { count: 0, lastResetDate: '' };
         const today = new Date().toISOString().split('T')[0];
 
-        // Reset count if the date has changed
         if (userGenData.lastResetDate !== today) {
             userGenData = { count: 0, lastResetDate: today };
-            allGenerations[userEmail] = userGenData;
+            allGenerations[currentUser.uid] = userGenData;
             localStorage.setItem('veoUserGenerations', JSON.stringify(allGenerations));
         }
         
         setGenerationData(userGenData);
-    }, [userEmail, currentUser]);
+    }, [currentUser]);
 
-    const handleLogin = (email: string, password: string, rememberMe: boolean) => {
-        const user = userService.getUserByEmail(email);
-
-        if (user) { // Existing user
-            if (user.password === password) {
-                if (!user.confirmed) {
-                    setLoginError("Your account is not confirmed. Please check your email for the confirmation link.");
-                    return;
-                }
-                if (rememberMe) {
-                    localStorage.setItem('veoUserEmail', email);
-                } else {
-                    sessionStorage.setItem('veoUserEmail', email);
-                }
-                setUserEmail(email);
-                setView('app');
-                setLoginError(null);
-            } else {
-                setLoginError("Invalid password. Please try again.");
+    const handleLogin = async (email: string, password: string, rememberMe: boolean) => {
+        if (!auth) {
+            setLoginError("Authentication service is not available.");
+            return;
+        }
+        setLoginError(null);
+        try {
+            await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            if (!userCredential.user.emailVerified && email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+                await signOut(auth);
+                setLoginError("Please verify your email before logging in. You can request a new verification link by attempting to register again.");
             }
-        } else { // New user registration
-            userService.addUser({ email, password });
-            setAllUsers(userService.getAllUsers());
-            
-            // Show confirmation message instead of logging in
-            setLoginError("Registration successful! A confirmation link has been sent to your email. Please verify your account to log in.");
+        } catch (error: any) {
+            if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+                try {
+                    const newUserCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    await firestoreService.createUserProfile(newUserCredential.user.uid, email);
+                    await sendEmailVerification(newUserCredential.user);
+                    await signOut(auth);
+                    setLoginError("Registration successful! A verification link has been sent to your email. Please verify your account and then log in.");
+                } catch (regError: any) {
+                    if (regError.code === 'auth/email-already-in-use') {
+                        setLoginError("Invalid password. Please try again.");
+                    } else {
+                        setLoginError(regError.message || 'An unexpected registration error occurred.');
+                    }
+                }
+            } else {
+                setLoginError(error.message || 'An unexpected error occurred.');
+            }
         }
     };
-
-    const handleLogout = () => {
-        localStorage.removeItem('veoUserEmail');
-        sessionStorage.removeItem('veoUserEmail');
-        setUserEmail(null);
-        setView('login');
+    
+    const handleLogout = async () => {
+        if (auth) {
+            await signOut(auth);
+        }
     };
     
     const handleDeleteUser = (emailToDelete: string) => {
-        if (emailToDelete === ADMIN_EMAIL) {
-            console.warn("Attempted to delete the primary admin account.");
-            return;
-        }
-        if (userService.deleteUser(emailToDelete)) {
-            setAllUsers(userService.getAllUsers());
-        }
+        console.warn("User deletion from the client is not supported for security reasons. This requires a backend with the Firebase Admin SDK.");
     };
+
+    const fetchAllUsers = useCallback(async () => {
+        if (currentUser?.role === 'admin') {
+            const usersFromDb = await firestoreService.getAllUsers();
+            setAllUsers(usersFromDb);
+        }
+    }, [currentUser]);
+
+    useEffect(() => {
+        if (view === 'admin') {
+            fetchAllUsers();
+        }
+    }, [view, fetchAllUsers]);
     
-    const handleUpdateUserRole = (emailToUpdate: string, newRole: UserRole) => {
-        if (emailToUpdate === ADMIN_EMAIL) {
+    const handleUpdateUserRole = async (uid: string, newRole: UserRole) => {
+        const userToUpdate = allUsers.find(u => u.uid === uid);
+        if (userToUpdate && userToUpdate.email === ADMIN_EMAIL) {
             console.warn("Cannot change the primary admin's role.");
             return;
         }
-        if (userService.updateUserRole(emailToUpdate, newRole)) {
-            setAllUsers(userService.getAllUsers());
-        }
+        await firestoreService.updateUserRole(uid, newRole);
+        fetchAllUsers();
     };
-    
-    const handleConfirmUser = (emailToConfirm: string) => {
-        if (userService.confirmUser(emailToConfirm)) {
-            setAllUsers(userService.getAllUsers());
-        }
-    };
-
 
     const availableTemplates = useMemo(() => {
         if (currentUser?.role === 'free') {
             return TEMPLATES.filter(t => !t.premium);
         }
-        return TEMPLATES; // Admins and paid users get all templates
+        return TEMPLATES;
     }, [currentUser]);
     
     const showcaseVideosWithPremium = useMemo(() => {
@@ -240,12 +278,9 @@ const App: React.FC = () => {
         setReferenceImage(null);
     }, [setFormState]);
 
-    // Effect to ensure free users don't have a premium template selected
     useEffect(() => {
         const selectedTemplateIsPremium = TEMPLATES.find(t => t.id === formState.selectedTemplateId)?.premium;
-
         if (currentUser?.role === 'free' && selectedTemplateIsPremium) {
-            // Find the first available non-premium template and switch to it.
             const firstFreeTemplate = availableTemplates[0];
             if (firstFreeTemplate) {
                 handleTemplateChange(firstFreeTemplate.id);
@@ -253,11 +288,26 @@ const App: React.FC = () => {
         }
     }, [formState.selectedTemplateId, currentUser, availableTemplates, handleTemplateChange]);
 
+    const handleGenerateStoryboard = useCallback(async (jsonOutput: string) => {
+        setIsGeneratingStoryboard(true);
+        setStoryboardError(null);
+        setStoryboardImages([]);
+        try {
+            const prompts = await generateStoryboardPrompts(jsonOutput);
+            const imagePromises = prompts.slice(0, 3).map(prompt => generateImage(prompt)); // Limit to 3 for performance
+            const images = await Promise.all(imagePromises);
+            setStoryboardImages(images);
+        } catch (e) {
+            console.error(e);
+            setStoryboardError('Failed to generate visual preview. The AI may be experiencing high load.');
+        } finally {
+            setIsGeneratingStoryboard(false);
+        }
+    }, []);
 
     const handleGenerate = useCallback(async () => {
         const today = new Date().toISOString().split('T')[0];
         
-        // Check limit for free users with robust date checking
         if (currentUser?.role === 'free') {
             const isNewDay = generationData.lastResetDate !== today;
             const currentCount = isNewDay ? 0 : generationData.count;
@@ -271,25 +321,28 @@ const App: React.FC = () => {
         setIsLoading(true);
         setError(null);
         setGeneratedJson('');
+        setStoryboardImages([]);
+        setStoryboardError(null);
+
         try {
             const styleName = VISUAL_STYLES.find(s => s.id === formState.selectedStyleId)?.name || null;
             const jsonOutput = await generateVeoPrompt(selectedTemplate.template, formState.inputValues, formState.negativePrompt, referenceImage, styleName);
             const cleanedJson = jsonOutput.replace(/^```json\s*|```$/g, '').trim();
-            setGeneratedJson(JSON.stringify(JSON.parse(cleanedJson), null, 2));
+            const parsedJson = JSON.stringify(JSON.parse(cleanedJson), null, 2);
+            setGeneratedJson(parsedJson);
+            
+            handleGenerateStoryboard(parsedJson);
 
-            // Increment count for free user on success
-            if (currentUser?.role === 'free' && userEmail) {
+            if (currentUser?.role === 'free' && currentUser.uid) {
                 const isNewDay = generationData.lastResetDate !== today;
                 const currentCount = isNewDay ? 0 : generationData.count;
                 const newCount = currentCount + 1;
-
                 const newGenData = { count: newCount, lastResetDate: today };
-
                 setGenerationData(newGenData);
 
                 const storedGenerationsJSON = localStorage.getItem('veoUserGenerations');
-                const allGenerations: { [email: string]: GenerationData } = storedGenerationsJSON ? JSON.parse(storedGenerationsJSON) : {};
-                allGenerations[userEmail] = newGenData;
+                const allGenerations: { [uid: string]: GenerationData } = storedGenerationsJSON ? JSON.parse(storedGenerationsJSON) : {};
+                allGenerations[currentUser.uid] = newGenData;
                 localStorage.setItem('veoUserGenerations', JSON.stringify(allGenerations));
             }
         } catch (e) {
@@ -298,7 +351,7 @@ const App: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [selectedTemplate, formState.inputValues, formState.negativePrompt, currentUser, userEmail, generationData, referenceImage, formState.selectedStyleId]);
+    }, [selectedTemplate, formState, currentUser, generationData, referenceImage, handleGenerateStoryboard]);
 
     const handleGenerateImage = useCallback(async (prompt: string) => {
         if (!prompt) {
@@ -319,24 +372,15 @@ const App: React.FC = () => {
     }, []);
 
     const handleInputChange = (newInputValues: { [key:string]: string }) => {
-        setFormState({
-            ...formState,
-            inputValues: newInputValues,
-        });
+        setFormState({ ...formState, inputValues: newInputValues });
     };
 
     const handleNegativePromptChange = (prompt: string) => {
-        setFormState({
-            ...formState,
-            negativePrompt: prompt,
-        });
+        setFormState({ ...formState, negativePrompt: prompt });
     };
     
     const handleStyleChange = (styleId: string | null) => {
-        setFormState({
-            ...formState,
-            selectedStyleId: styleId,
-        });
+        setFormState({ ...formState, selectedStyleId: styleId });
     };
 
     const handleCustomCssChange = (css: string) => {
@@ -353,29 +397,30 @@ const App: React.FC = () => {
                 selectedStyleId: null,
             });
             setReferenceImage(null);
+            setGeneratedJson('');
+            setStoryboardImages([]);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
     
-    // Conditional Rendering Logic
-    if (view === 'login' || !userEmail || !currentUser) {
-        return <LoginPage 
-                    onLogin={handleLogin} 
-                    error={loginError} 
-                    onClearError={() => setLoginError(null)}
-                    onNavigateToPrivacy={() => setView('privacy')}
-                />;
+    if (isAuthLoading) {
+         return (
+            <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white font-futuristic">
+                 <svg className="animate-spin h-10 w-10 text-cyan-400 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p className="text-xl tracking-wider">Authenticating...</p>
+            </div>
+        );
+    }
+
+    if (view === 'login' || !currentUser) {
+        return <LoginPage onLogin={handleLogin} error={loginError} onClearError={() => setLoginError(null)} onNavigateToPrivacy={() => setView('privacy')} />;
     }
     
     if (view === 'admin') {
-        return <AdminPanel 
-                    users={allUsers} 
-                    onDeleteUser={handleDeleteUser} 
-                    onUpdateUserRole={handleUpdateUserRole}
-                    onBackToApp={() => setView('app')}
-                    currentUserEmail={userEmail}
-                    onConfirmUser={handleConfirmUser}
-                />;
+        return <AdminPanel users={allUsers} onDeleteUser={handleDeleteUser} onUpdateUserRole={handleUpdateUserRole} onBackToApp={() => setView('app')} currentUser={currentUser} />;
     }
     
     if (view === 'about') {
@@ -383,20 +428,12 @@ const App: React.FC = () => {
     }
 
     if (view === 'privacy') {
-        return <PrivacyPolicyPage onBack={() => setView(userEmail ? 'app' : 'login')} />;
+        return <PrivacyPolicyPage onBack={() => setView(currentUser ? 'app' : 'login')} />;
     }
-
 
     return (
         <div className="min-h-screen text-slate-200 flex flex-col font-futuristic">
-            <Header 
-                userEmail={userEmail} 
-                onLogout={handleLogout}
-                isAdmin={currentUser.role === 'admin'}
-                onNavigateToAdmin={() => setView('admin')}
-                onNavigateToAbout={() => setView('about')}
-                onNavigateToPrivacy={() => setView('privacy')}
-            />
+            <Header userEmail={currentUser.email} onLogout={handleLogout} isAdmin={currentUser.role === 'admin'} onNavigateToAdmin={() => setView('admin')} onNavigateToAbout={() => setView('about')} onNavigateToPrivacy={() => setView('privacy')} />
             <main className="flex-grow container mx-auto p-4 md:p-8 flex flex-col gap-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                     <InputPanel
@@ -433,6 +470,9 @@ const App: React.FC = () => {
                         isLoading={isLoading}
                         error={error}
                         customCss={customCss}
+                        storyboardImages={storyboardImages}
+                        isGeneratingStoryboard={isGeneratingStoryboard}
+                        storyboardError={storyboardError}
                     />
                 </div>
                  <InspirationShowcase videos={showcaseVideosWithPremium} onLoadExample={handleExampleChange} userRole={currentUser.role} />

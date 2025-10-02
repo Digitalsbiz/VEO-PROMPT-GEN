@@ -1,5 +1,6 @@
 
-import { GoogleGenAI } from "@google/genai";
+
+import { GoogleGenAI, Type } from "@google/genai";
 import { ReferenceImage } from "../types";
 
 const API_KEY = process.env.API_KEY;
@@ -33,6 +34,41 @@ export async function generateImage(prompt: string): Promise<ReferenceImage> {
     } catch(error) {
         console.error("Error calling Imagen API:", error);
         throw new Error("Failed to communicate with the Imagen API.");
+    }
+}
+
+export async function generateStoryboardPrompts(jsonPrompt: string): Promise<string[]> {
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: `Based on the following Veo JSON prompt, create a concise list of 3 distinct and visually descriptive image generation prompts for a storyboard that captures the key moments: the beginning, the middle, and the end of the video.
+            
+            Veo JSON Prompt:
+            ${jsonPrompt}
+            
+            Return ONLY a JSON array of strings. For example: ["prompt 1", "prompt 2", "prompt 3"]`,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.ARRAY,
+                    items: {
+                        type: Type.STRING,
+                        description: "A concise and visually descriptive prompt for generating a storyboard image."
+                    }
+                }
+            }
+        });
+
+        const prompts = JSON.parse(response.text);
+        if (Array.isArray(prompts) && prompts.every(p => typeof p === 'string')) {
+            return prompts;
+        }
+        console.error("Received invalid format for storyboard prompts:", prompts);
+        throw new Error("Invalid storyboard prompt format received.");
+
+    } catch (error) {
+        console.error("Error generating storyboard prompts:", error);
+        throw new Error("Failed to generate storyboard prompts from the JSON output.");
     }
 }
 

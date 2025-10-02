@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { UsersIcon, TrashIcon, AlertTriangleIcon } from './icons';
 import { ADMIN_EMAIL } from '../constants';
@@ -7,14 +6,12 @@ import { User, UserRole } from '../types';
 interface AdminPanelProps {
     users: User[];
     onDeleteUser: (email: string) => void;
-    onUpdateUserRole: (email: string, role: UserRole) => void;
+    onUpdateUserRole: (uid: string, role: UserRole) => void;
     onBackToApp: () => void;
-    currentUserEmail: string;
-    onConfirmUser: (email: string) => void;
+    currentUser: User;
 }
 
 const ConfirmationModal: React.FC<{ user: User; onConfirm: () => void; onCancel: () => void }> = ({ user, onConfirm, onCancel }) => {
-     // Handle Escape key
     useEffect(() => {
         const handleEsc = (event: KeyboardEvent) => {
             if (event.key === 'Escape') {
@@ -40,7 +37,7 @@ const ConfirmationModal: React.FC<{ user: User; onConfirm: () => void; onCancel:
                         </h3>
                         <div className="mt-2">
                             <p className="text-sm text-slate-400">
-                                Are you sure you want to delete the user <strong className="font-semibold text-slate-200">{user.email}</strong>? This action cannot be undone.
+                                Are you sure you want to delete the user <strong className="font-semibold text-slate-200">{user.email}</strong>? This action cannot be undone and requires a backend setup.
                             </p>
                         </div>
                     </div>
@@ -66,10 +63,12 @@ const ConfirmationModal: React.FC<{ user: User; onConfirm: () => void; onCancel:
     );
 };
 
-export const AdminPanel: React.FC<AdminPanelProps> = ({ users, onDeleteUser, onUpdateUserRole, onBackToApp, currentUserEmail, onConfirmUser }) => {
+export const AdminPanel: React.FC<AdminPanelProps> = ({ users, onDeleteUser, onUpdateUserRole, onBackToApp, currentUser }) => {
     const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
     const handleDeleteClick = (user: User) => {
+        // While the button is disabled, this is a fallback
+        if (user.role === 'admin') return;
         setUserToDelete(user);
     };
 
@@ -126,9 +125,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ users, onDeleteUser, onU
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                                         Role
                                     </th>
-                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                                        Status
-                                    </th>
                                     <th scope="col" className="relative px-6 py-3">
                                         <span className="sr-only">Actions</span>
                                     </th>
@@ -136,7 +132,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ users, onDeleteUser, onU
                             </thead>
                             <tbody className="divide-y divide-slate-700">
                                 {users.map((user) => (
-                                    <tr key={user.email} className="hover:bg-slate-800/50 transition-colors">
+                                    <tr key={user.uid} className="hover:bg-slate-800/50 transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-200">{user.email}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
                                             {user.role === 'admin' ? (
@@ -146,7 +142,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ users, onDeleteUser, onU
                                             ) : (
                                                 <select
                                                     value={user.role}
-                                                    onChange={(e) => onUpdateUserRole(user.email, e.target.value as UserRole)}
+                                                    onChange={(e) => onUpdateUserRole(user.uid, e.target.value as UserRole)}
                                                     className="w-full bg-slate-700 border border-slate-600 rounded-md shadow-sm p-1.5 text-xs text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
                                                     aria-label={`Role for ${user.email}`}
                                                 >
@@ -155,28 +151,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ users, onDeleteUser, onU
                                                 </select>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                            {user.confirmed ? (
-                                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-900 text-green-300">
-                                                    Confirmed
-                                                </span>
-                                            ) : (
-                                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-900 text-yellow-300">
-                                                    Pending
-                                                </span>
-                                            )}
-                                        </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <div className="flex items-center justify-end gap-4">
-                                                {!user.confirmed && user.role !== 'admin' && (
-                                                    <button
-                                                        onClick={() => onConfirmUser(user.email)}
-                                                        className="font-semibold text-emerald-500 hover:text-emerald-400 transition-colors"
-                                                        aria-label={`Confirm user ${user.email}`}
-                                                    >
-                                                        Confirm User
-                                                    </button>
-                                                )}
                                                 <button
                                                     onClick={() => handleDeleteClick(user)}
                                                     disabled={user.role === 'admin'}

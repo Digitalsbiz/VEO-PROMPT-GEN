@@ -14,11 +14,8 @@ export const PrivacyPolicyPage: React.FC<PrivacyPolicyPageProps> = ({ onBack }) 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!name || !email || !message) {
-            // In a real app, you might show validation errors.
-            // For this simulation, we'll just prevent submission.
             return;
         }
-        // Simulate sending the form data
         console.log('Form submitted:', { name, email, message });
         setIsSubmitted(true);
     };
@@ -54,25 +51,24 @@ export const PrivacyPolicyPage: React.FC<PrivacyPolicyPageProps> = ({ onBack }) 
                     <section>
                         <h2 className="text-xl font-semibold text-slate-100 mb-2">2. Information We Collect</h2>
                         <p>
-                            Our application is designed to function primarily on your local device. We collect and store the following information directly in your browser's local storage:
+                            We use Google Firebase to manage user accounts. When you register or log in, we collect the following information, which is stored securely with Firebase:
                         </p>
                         <ul className="list-disc list-inside mt-2 space-y-1 pl-4">
-                            <li><strong>Account Information:</strong> Your email address and a password you provide for authentication purposes.</li>
-                            <li><strong>User Data:</strong> Information about your user role (e.g., 'free', 'paid', 'admin') and confirmation status.</li>
-                            <li><strong>Generation Data:</strong> A count of the prompts you have generated and the date of your last activity to manage daily limits for free users.</li>
+                            <li><strong>Authentication Information:</strong> Your email address and a securely hashed version of your password for authentication purposes.</li>
+                            <li><strong>User Profile Data:</strong> We create a profile associated with your account that stores your user role (e.g., 'free', 'paid', 'admin') and a unique user ID.</li>
                         </ul>
-                        <p className="mt-2">
-                            This data remains on your computer and is not transmitted to our servers.
+                         <p className="mt-2">
+                           We also use your browser's local storage for non-sensitive application state, such as your form inputs and generation limits, to improve your experience.
                         </p>
                     </section>
                     
                     <section>
                         <h2 className="text-xl font-semibold text-slate-100 mb-2">3. How We Use Your Information</h2>
                         <p>
-                            The information stored locally is used solely to:
+                            Your information is used to:
                         </p>
                          <ul className="list-disc list-inside mt-2 space-y-1 pl-4">
-                            <li>Authenticate you and provide access to the application.</li>
+                            <li>Authenticate you and provide secure access to the application.</li>
                             <li>Manage your user role and associated permissions (e.g., access to premium templates).</li>
                             <li>Enforce daily generation limits for free-tier users.</li>
                         </ul>
@@ -81,28 +77,28 @@ export const PrivacyPolicyPage: React.FC<PrivacyPolicyPageProps> = ({ onBack }) 
                      <section>
                         <h2 className="text-xl font-semibold text-slate-100 mb-2">4. Third-Party Services</h2>
                         <p>
-                            To provide the core functionality of prompt generation, we interact with the Google Gemini API. When you generate a prompt, the following data is sent to Google:
+                           Our application is built on Google Firebase and integrates with the Google Gemini API.
                         </p>
                          <ul className="list-disc list-inside mt-2 space-y-1 pl-4">
-                             <li>The content of the template you are using.</li>
-                             <li>The text and images you input into the form fields.</li>
+                             <li><strong>Google Firebase:</strong> Handles all user authentication and stores user profile data. Your interaction with our authentication system is subject to the Google Privacy Policy.</li>
+                             <li><strong>Google Gemini API:</strong> When you generate a prompt, the content of the template and your inputs (text and images) are sent to Google for processing. We do not send your email address or any other personal identification to the Gemini API.</li>
                          </ul>
                          <p className="mt-2">
-                            We do not send your email address or any other personal identification to the Gemini API. Your interaction with the Google Gemini API is subject to Google's Privacy Policy. We encourage you to review it.
+                           We encourage you to review Google's Privacy Policy to understand how they handle your data.
                         </p>
                     </section>
 
                      <section>
                         <h2 className="text-xl font-semibold text-slate-100 mb-2">5. Data Security & Storage</h2>
                         <p>
-                            All user-specific data is stored in your web browser's local storage. This means the data resides on your device. While we do not transmit this personal data to a central server, you are responsible for the security of the device you use to access the application. You can clear this data at any time by clearing your browser's cache and local storage.
+                           Your account credentials and profile information are stored securely within the Google Firebase ecosystem, which employs industry-standard security measures to protect your data. You are responsible for maintaining the confidentiality of your password.
                         </p>
                     </section>
                     
                      <section>
                         <h2 className="text-xl font-semibold text-slate-100 mb-2">6. Your Rights</h2>
                         <p>
-                           Since your data is stored locally, you have full control over it. You can view, modify, or delete your data by using your browser's developer tools or by clearing your browser's storage for this site. Deleting your local storage data will effectively log you out and remove all user-related information from your device.
+                          You have the right to access and manage your account. If you wish to delete your account and associated data, please contact us. Please note that deleting your account is irreversible.
                         </p>
                     </section>
 

@@ -29,7 +29,6 @@ export interface VisualStyle {
 }
 
 export const ADMIN_EMAIL = 'digitalsbiz@gmail.com';
-export const ADMIN_PASSWORD = 'Admin123';
 export const FREE_USER_GENERATION_LIMIT = 5;
 
 export const VISUAL_STYLES: VisualStyle[] = [

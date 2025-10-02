@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { FilmIcon, AlertTriangleIcon, MailIcon } from './icons';
-import { ADMIN_EMAIL, ADMIN_PASSWORD } from '../constants';
+import { ADMIN_EMAIL } from '../constants';
 
 interface LoginPageProps {
     onLogin: (email: string, password: string, rememberMe: boolean) => void;
@@ -15,56 +14,52 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, error, onClearErr
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(true);
     const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+    const [isLoading, setIsLoading] = useState(false);
 
     const validate = (): boolean => {
         const newErrors: { email?: string; password?: string } = {};
 
-        // More robust email validation
         if (!email) {
             newErrors.email = 'Email address is required.';
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             newErrors.email = 'Please enter a valid email address.';
         }
 
-        // Password validation with complexity rules
         if (!password) {
             newErrors.password = 'Password is required.';
-        } else if (password.length < 8) {
-            newErrors.password = 'Password must be at least 8 characters long.';
-        } else if (!/(?=.*[A-Z])/.test(password)) {
-            newErrors.password = 'Password must contain at least one uppercase letter.';
-        } else if (!/(?=.*[0-9])/.test(password)) {
-            newErrors.password = 'Password must contain at least one number.';
+        } else if (password.length < 6) {
+            // Firebase default minimum is 6
+            newErrors.password = 'Password must be at least 6 characters long.';
         }
         
         setErrors(newErrors);
-        // Return true if there are no errors
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         onClearError();
         if (validate()) {
-            onLogin(email, password, rememberMe);
+            setIsLoading(true);
+            await onLogin(email, password, rememberMe);
+            setIsLoading(false);
         }
     };
     
     const handleAdminLoginClick = () => {
-        onClearError(); // Clear previous errors
+        onClearError();
         setEmail(ADMIN_EMAIL);
-        setPassword(ADMIN_PASSWORD);
+        // Admin password is now managed in Firebase, this just pre-fills the email.
     };
 
     const inputClass = (hasError: boolean) => 
-        `w-full bg-slate-800 border rounded-md shadow-sm p-3 text-slate-200 focus:ring-2 transition duration-150 ease-in-out ${
+        `w-full bg-slate-800 border rounded-md shadow-sm p-3 text-slate-200 focus:ring-2 transition duration-150 ease-in-out disabled:opacity-50 ${
             hasError 
                 ? 'border-red-500 focus:ring-red-500 focus:border-red-500 pr-10' 
                 : 'border-slate-600 focus:ring-indigo-500 focus:border-indigo-500'
         }`;
         
     const isSuccessMessage = error?.startsWith('Registration successful!');
-
 
     return (
         <div className="min-h-screen bg-slate-900 text-slate-200 flex items-center justify-center p-4">
@@ -73,7 +68,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, error, onClearErr
                     <div className="flex flex-col items-center text-center mb-8">
                         <FilmIcon className="w-12 h-12 text-indigo-400 mb-4" />
                         <h1 className="text-3xl font-bold text-slate-100 tracking-tight">Veo Prompt Architect</h1>
-                        <p className="text-slate-400 mt-2">Sign in to continue to your workspace.</p>
+                        <p className="text-slate-400 mt-2">Sign in or create an account to continue.</p>
                     </div>
 
                     <form onSubmit={handleSubmit} noValidate>
@@ -108,6 +103,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, error, onClearErr
                                     autoFocus
                                     aria-invalid={!!errors.email}
                                     aria-describedby="email-error"
+                                    disabled={isLoading}
                                 />
                                 {errors.email && (
                                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -133,6 +129,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, error, onClearErr
                                     aria-required="true"
                                     aria-invalid={!!errors.password}
                                     aria-describedby="password-error"
+                                    disabled={isLoading}
                                 />
                                  {errors.password && (
                                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -151,7 +148,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, error, onClearErr
                                     type="checkbox"
                                     checked={rememberMe}
                                     onChange={(e) => setRememberMe(e.target.checked)}
-                                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-500 rounded bg-slate-700"
+                                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-500 rounded bg-slate-700 disabled:opacity-50"
+                                    disabled={isLoading}
                                 />
                                 <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-400">
                                     Remember me
@@ -161,15 +159,18 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, error, onClearErr
 
                         <button
                             type="submit"
-                            className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded-md transition duration-200 ease-in-out transform hover:scale-105"
+                            disabled={isLoading}
+                            className="w-full flex justify-center items-center bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded-md transition duration-200 ease-in-out transform hover:scale-105 disabled:bg-indigo-800 disabled:scale-100 disabled:cursor-not-allowed"
                         >
-                            Continue with Email
+                             {isLoading && <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>}
+                            {isLoading ? 'Processing...' : 'Continue with Email'}
                         </button>
                         <div className="text-center mt-6">
                             <button
                                 type="button"
                                 onClick={handleAdminLoginClick}
-                                className="text-sm font-medium text-slate-500 hover:text-indigo-400 transition-colors duration-200"
+                                disabled={isLoading}
+                                className="text-sm font-medium text-slate-500 hover:text-indigo-400 transition-colors duration-200 disabled:opacity-50"
                             >
                                 Sign in as Admin
                             </button>

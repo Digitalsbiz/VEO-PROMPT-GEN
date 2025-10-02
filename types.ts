@@ -1,11 +1,10 @@
-
 export type UserRole = 'admin' | 'free' | 'paid';
 
 export interface User {
+    uid: string;
     email: string;
-    password: string;
     role: UserRole;
-    confirmed: boolean;
+    emailVerified: boolean;
 }
 
 export interface ReferenceImage {
